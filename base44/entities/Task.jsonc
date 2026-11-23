@@ -1,0 +1,123 @@
+{
+  "name": "Task",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "T\u00edtulo"
+    },
+    "requester": {
+      "type": "string",
+      "title": "Solicitante"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Anota\u00e7\u00f5es"
+    },
+    "priority": {
+      "type": "string",
+      "title": "Prioridade",
+      "enum": [
+        "baixa",
+        "media",
+        "alta"
+      ],
+      "enumColors": [
+        "green",
+        "yellow",
+        "red"
+      ],
+      "default": "media"
+    },
+    "stage": {
+      "type": "string",
+      "title": "Etapa",
+      "enum": [
+        "para_iniciar",
+        "em_andamento",
+        "finalizado"
+      ],
+      "enumColors": [
+        "gray",
+        "blue",
+        "green"
+      ],
+      "default": "para_iniciar"
+    },
+    "project_id": {
+      "type": "string",
+      "title": "Projeto"
+    },
+    "schedule_type": {
+      "type": "string",
+      "title": "Agendamento",
+      "enum": [
+        "none",
+        "day",
+        "range"
+      ],
+      "enumColors": [
+        "gray",
+        "blue",
+        "purple"
+      ],
+      "default": "none"
+    },
+    "date": {
+      "type": "string",
+      "title": "Data"
+    },
+    "start_date": {
+      "type": "string",
+      "title": "Data de in\u00edcio"
+    },
+    "end_date": {
+      "type": "string",
+      "title": "Prazo final"
+    }
+  },
+  "required": [
+    "title"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
