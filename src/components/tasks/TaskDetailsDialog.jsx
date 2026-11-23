@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { deleteTask } from "@/api/agenda";
 import ResponsiveDialog from "@/components/ui-shared/ResponsiveDialog";
 import { PRIORITY_STYLES, STAGE_STYLES } from "@/lib/taskConstants";
-import { taskDueLabel } from "@/lib/dates";
+import { taskScheduleLabel } from "@/lib/dates";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -79,7 +79,7 @@ export default function TaskDetailsDialog({ open, onOpenChange, task, project, o
             <span className="h-2 w-2 rounded-full" style={{ backgroundColor: priority.color }} />
             {priority.label}
           </span>
-          <span className="rounded-full bg-secondary px-2 py-1 font-medium text-foreground">{taskDueLabel(task)}</span>
+          <span className="rounded-full bg-secondary px-2 py-1 font-medium text-foreground">{taskScheduleLabel(task)}</span>
         </div>
 
         <dl className="mt-5 space-y-3 text-sm">

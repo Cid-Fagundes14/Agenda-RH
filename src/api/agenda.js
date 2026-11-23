@@ -4,7 +4,7 @@ function nullableFields(value, names) {
   return { ...value, ...Object.fromEntries(names.map((name) => [name, value[name] || null])) };
 }
 
-const taskFields = (task) => nullableFields(task, ["project_id", "date", "start_date", "end_date"]);
+const taskFields = (task) => nullableFields(task, ["project_id", "date", "start_date", "end_date", "start_time"]);
 const projectFields = (project) => nullableFields(project, ["event_date", "event_start", "event_end"]);
 
 async function list(table) {

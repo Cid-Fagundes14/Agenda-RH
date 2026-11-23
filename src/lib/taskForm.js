@@ -9,6 +9,9 @@ export function validateTaskForm(form) {
       return "O prazo final deve ser igual ou posterior à data de início.";
     }
   }
+  if (form.schedule_type !== "none" && form.start_time && !/^([01]\d|2[0-3]):[0-5]\d$/.test(form.start_time)) {
+    return "Informe uma hora de início válida.";
+  }
   return "";
 }
 
@@ -23,6 +26,7 @@ export function taskPayload(form) {
     schedule_type: form.schedule_type || "none",
     date: form.schedule_type === "day" ? form.date : "",
     start_date: form.schedule_type === "range" ? form.start_date : "",
+    start_time: form.schedule_type === "day" || form.schedule_type === "range" ? form.start_time || "" : "",
     end_date: form.schedule_type === "range" ? form.end_date : "",
   };
 }

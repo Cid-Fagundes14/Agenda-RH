@@ -2,6 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { taskStartTime } from "@/lib/dates";
 import { PRIORITIES, SCHEDULE_OPTIONS, STAGES } from "@/lib/taskConstants";
 import { cn } from "@/lib/utils";
 
@@ -147,6 +148,25 @@ export default function TaskFormFields({ value, onChange, projects = [], hidePro
               className="min-h-11"
             />
           </div>
+        </div>
+      ) : null}
+
+      {value.schedule_type !== "none" ? (
+        <div className="space-y-1.5">
+          <Label htmlFor="task-time">Hora de início (opcional)</Label>
+          <Input
+            id="task-time"
+            type="time"
+            value={taskStartTime(value)}
+            onChange={(e) => set({ start_time: e.target.value })}
+            className="min-h-11 min-w-0"
+            aria-describedby={value.schedule_type === "range" ? "task-time-help" : undefined}
+          />
+          {value.schedule_type === "range" ? (
+            <p id="task-time-help" className="text-xs text-muted-foreground">
+              O horário vale para todos os dias do período.
+            </p>
+          ) : null}
         </div>
       ) : null}
 

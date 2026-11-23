@@ -3,7 +3,7 @@ import { Pencil, Plus, Trash2 } from "lucide-react";
 import TaskFormFields from "@/components/tasks/TaskFormFields";
 import { emptyTask, PRIORITY_STYLES } from "@/lib/taskConstants";
 import { normalizeDraftTask, validateTaskForm } from "@/lib/taskForm";
-import { taskDueLabel } from "@/lib/dates";
+import { taskScheduleLabel } from "@/lib/dates";
 
 export default function ProjectTaskDrafts({ drafts, onChange }) {
   const [editorOpen, setEditorOpen] = useState(false);
@@ -75,7 +75,7 @@ export default function ProjectTaskDrafts({ drafts, onChange }) {
                   <p className="truncate text-sm font-medium text-foreground">{task.title}</p>
                   <p className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
                     <span className="h-2 w-2 rounded-full" style={{ backgroundColor: priority.color }} />
-                    {priority.label} · {taskDueLabel(task)}
+                    {priority.label} · {taskScheduleLabel(task)}
                   </p>
                 </div>
                 <button
