@@ -1,14 +1,14 @@
 import { Link } from "@tanstack/react-router";
 import { Check } from "lucide-react";
 import { PRIORITY_STYLES, STAGE_STYLES } from "@/lib/taskConstants";
-import { longDate, projectOccursOn, taskDueDate, taskOccursOn } from "@/lib/dates";
+import { compareTaskStartTime, longDate, projectOccursOn, taskDueDate, taskOccursOn, taskStartTime } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 
 export default function DayAgenda({ date, tasks, projects, onToggleTask, onOpenTask }) {
   const events = projects.filter((project) => projectOccursOn(project, date));
   const dayTasks = tasks
     .filter((task) => taskOccursOn(task, date))
-    .sort((a, b) => Number(a.stage === "finalizado") - Number(b.stage === "finalizado"));
+    .sort((a, b) => compareTaskStartTime(a, b) || Number(a.stage === "finalizado") - Number(b.stage === "finalizado"));
 
   return (
     <div className="card-surface p-4">
@@ -47,6 +47,7 @@ export default function DayAgenda({ date, tasks, projects, onToggleTask, onOpenT
               const done = task.stage === "finalizado";
               const priority = PRIORITY_STYLES[task.priority] || PRIORITY_STYLES.media;
               const stage = STAGE_STYLES[task.stage] || STAGE_STYLES.para_iniciar;
+              const time = taskStartTime(task);
               const isDue = taskDueDate(task) === date;
               return (
                 <li key={task.id} className="flex items-start gap-1 rounded-md border border-border">
@@ -70,6 +71,7 @@ export default function DayAgenda({ date, tasks, projects, onToggleTask, onOpenT
                       {task.title}
                     </p>
                     <div className="mt-1 flex flex-wrap items-center gap-1.5 text-[11px]">
+                      {time ? <time className="font-semibold text-foreground">{time}</time> : null}
                       <span className="inline-flex items-center gap-1 text-muted-foreground">
                         <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: priority.color }} />
                         {priority.label}

@@ -7,7 +7,7 @@ import TaskItem from "@/components/tasks/TaskItem";
 import TaskFormDialog from "@/components/tasks/TaskFormDialog";
 import TaskDetailsDialog from "@/components/tasks/TaskDetailsDialog";
 import { useAgendaData } from "@/hooks/useAgendaData";
-import { isTaskOpen, projectOccursOn, taskDueDate, taskIsOverdue, taskOccursOn, todayISO } from "@/lib/dates";
+import { compareTaskStartTime, isTaskOpen, projectOccursOn, taskDueDate, taskIsOverdue, taskOccursOn, todayISO } from "@/lib/dates";
 
 export const Route = createFileRoute("/_authed/")({
   head: () => ({ meta: [{ title: "Hoje · Agenda de RH" }] }),
@@ -17,7 +17,9 @@ export const Route = createFileRoute("/_authed/")({
 const PRIORITY_ORDER = { alta: 0, media: 1, baixa: 2 };
 
 function sortToday(list, today) {
-  return [...list].sort((a, b) => {
+  return list.sort((a, b) => {
+    const timeOrder = compareTaskStartTime(a, b);
+    if (timeOrder !== 0) return timeOrder;
     const aDue = taskDueDate(a) === today ? 0 : 1;
     const bDue = taskDueDate(b) === today ? 0 : 1;
     if (aDue !== bDue) return aDue - bDue;
@@ -51,7 +53,7 @@ function HojePage() {
   );
 
   const todayDone = useMemo(
-    () => tasks.filter((task) => !isTaskOpen(task) && taskOccursOn(task, today)),
+    () => tasks.filter((task) => !isTaskOpen(task) && taskOccursOn(task, today)).sort(compareTaskStartTime),
     [tasks, today]
   );
 

@@ -3,17 +3,22 @@ import { toast } from "sonner";
 import { saveTask } from "@/api/agenda";
 import ResponsiveDialog from "@/components/ui-shared/ResponsiveDialog";
 import TaskFormFields from "@/components/tasks/TaskFormFields";
+import { taskStartTime } from "@/lib/dates";
 import { emptyTask } from "@/lib/taskConstants";
 import { taskPayload, validateTaskForm } from "@/lib/taskForm";
 
+function taskToForm(task) {
+  return emptyTask({ ...task, start_time: taskStartTime(task) });
+}
+
 export default function TaskFormDialog({ open, onOpenChange, projects = [], task = null, defaults = {}, onSaved }) {
-  const [form, setForm] = useState(() => emptyTask(task || defaults));
+  const [form, setForm] = useState(() => taskToForm(task || defaults));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
     if (open) {
-      setForm(emptyTask(task || defaults));
+      setForm(taskToForm(task || defaults));
       setError("");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

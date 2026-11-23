@@ -48,6 +48,7 @@ export function emptyTask(overrides = {}) {
     schedule_type: "none",
     date: "",
     start_date: "",
+    start_time: "",
     end_date: "",
     ...overrides,
   };

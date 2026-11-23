@@ -100,11 +100,22 @@ export function taskIsOverdue(task, today) {
   return !!due && isTaskOpen(task) && due < today;
 }
 
-export function taskDueLabel(task) {
+export function taskStartTime(task) {
+  return task.start_time?.slice(0, 5) || "";
+}
+
+export function compareTaskStartTime(a, b) {
+  return (taskStartTime(a) || "24:00").localeCompare(taskStartTime(b) || "24:00");
+}
+
+export function taskScheduleLabel(task) {
   const range = taskRange(task);
   if (!range) return "Sem data";
-  if (range.start === range.end) return formatBR(range.end);
-  return `${formatBRShort(range.start)} a ${formatBR(range.end)}`;
+  const dates = range.start === range.end
+    ? formatBR(range.end)
+    : `${formatBRShort(range.start)} a ${formatBR(range.end)}`;
+  const time = taskStartTime(task);
+  return time ? `${dates} · ${time}` : dates;
 }
 
 // ---- Projetos / eventos ----

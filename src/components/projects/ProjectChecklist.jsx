@@ -1,6 +1,6 @@
 import { Check, Pencil } from "lucide-react";
 import { STAGE_STYLES } from "@/lib/taskConstants";
-import { taskDueLabel, taskIsOverdue } from "@/lib/dates";
+import { taskScheduleLabel, taskIsOverdue } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 
 export default function ProjectChecklist({ tasks, today, onToggle, onEdit }) {
@@ -45,7 +45,7 @@ export default function ProjectChecklist({ tasks, today, onToggle, onEdit }) {
             <span className="rounded-full px-2 py-0.5 font-medium" style={{ backgroundColor: stage.bg, color: stage.color }}>
               {stage.label}
             </span>
-            <span className={cn(overdue && "font-semibold text-[#DC2626]")}>{taskDueLabel(task)}</span>
+            <span className={cn(overdue && "font-semibold text-[#DC2626]")}>{taskScheduleLabel(task)}</span>
           </div>
         </div>
 

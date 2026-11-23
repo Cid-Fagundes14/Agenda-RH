@@ -1,7 +1,7 @@
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PRIORITY_STYLES, STAGE_STYLES } from "@/lib/taskConstants";
-import { taskDueLabel } from "@/lib/dates";
+import { taskScheduleLabel } from "@/lib/dates";
 
 export default function TaskItem({ task, project, overdue = false, onToggle, onOpen }) {
   const done = task.stage === "finalizado";
@@ -51,7 +51,7 @@ export default function TaskItem({ task, project, overdue = false, onToggle, onO
             {priority.label}
           </span>
           <span className="text-slate-300">·</span>
-          <span className={cn(overdue && "font-semibold text-[#DC2626]")}>{taskDueLabel(task)}</span>
+          <span className={cn(overdue && "font-semibold text-[#DC2626]")}>{taskScheduleLabel(task)}</span>
           {project ? (
             <>
               <span className="text-slate-300">·</span>

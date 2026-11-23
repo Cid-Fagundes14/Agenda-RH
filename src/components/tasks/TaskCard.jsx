@@ -1,5 +1,5 @@
 import { PRIORITY_STYLES, STAGE_STYLES } from "@/lib/taskConstants";
-import { taskDueLabel, taskIsOverdue } from "@/lib/dates";
+import { taskScheduleLabel, taskIsOverdue } from "@/lib/dates";
 import StageSelect from "@/components/tasks/StageSelect";
 import { cn } from "@/lib/utils";
 
@@ -20,7 +20,7 @@ export default function TaskCard({ task, project, today, onOpen, onStageChange }
             {priority.label}
           </span>
           <span className="text-slate-300">·</span>
-          <span className={cn(overdue && "font-semibold text-[#DC2626]")}>{taskDueLabel(task)}</span>
+          <span className={cn(overdue && "font-semibold text-[#DC2626]")}>{taskScheduleLabel(task)}</span>
         </div>
         <div className="mt-1.5 flex items-center gap-1.5 text-xs text-muted-foreground">
           {project ? (
