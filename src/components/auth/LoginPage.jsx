@@ -1,80 +1,39 @@
-import { Lock, LogIn, Mail } from "lucide-react";
+import { LogIn } from "lucide-react";
 import { useState } from "react";
+import { getSupabase, hasSupabaseConfig, resultOf } from "@/api/supabase";
 import { AuthLayout } from "@/components/auth/AuthLayout";
-import { AuthError, AuthLink, GoogleButton, OrDivider, SubmitButton } from "@/components/auth/parts";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { MfaFlow } from "@/components/auth/MfaFlow";
-import { MfaScreen } from "@/components/auth/MfaParts";
-import { loginWithMfa } from "@/lib/authMfa";
+import { AuthError, AuthField, AuthLink, SubmitButton } from "@/components/auth/parts";
 import { safeReturnTo } from "@/lib/authReturnTo";
 
-// The /login page. ?returnTo= (or the platform's ?from_url=) is where the visitor
-// goes after signing in — the login gate and the MCP consent page send people here with it.
 export function LoginPage() {
-  const returnTo = safeReturnTo();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [mfaChallenge, setMfaChallenge] = useState(null);
 
-  async function submit(e) {
-    e.preventDefault();
+  async function submit(event) {
+    event.preventDefault();
+    const values = new FormData(event.currentTarget);
     setError("");
     setBusy(true);
     try {
-      const result = await loginWithMfa(email, password);
-      if (result.mfa_required) {
-        setMfaChallenge(result);
-        return;
-      }
-      // A hard redirect: the app re-initializes with the new session.
-      window.location.href = returnTo;
-    } catch (err) {
-      setError(err.message || "Invalid email or password");
+      await resultOf(getSupabase().auth.signInWithPassword({
+        email: values.get("email").trim(), password: values.get("password"),
+      }));
+      window.location.replace(safeReturnTo());
+    } catch (failure) {
+      setError(failure.code === "invalid_credentials" ? "E-mail ou senha incorretos." : "Não foi possível entrar. Tente novamente.");
       setBusy(false);
     }
   }
 
-  // The second sign-in step (authenticator app or text message) replaces the whole page.
-  if (mfaChallenge) return <MfaScreen><MfaFlow challenge={mfaChallenge} returnTo={returnTo} /></MfaScreen>;
-
   return (
-    <AuthLayout icon={LogIn} title="Welcome back" subtitle="Log in to your account">
-      <GoogleButton returnTo={returnTo} onError={setError} />
-      <OrDivider />
-      <AuthError>{error}</AuthError>
+    <AuthLayout icon={LogIn} title="Entrar na Agenda de RH" subtitle="Acesse suas tarefas, projetos e calendário.">
       <form onSubmit={submit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="login-email">Email</Label>
-          <div className="relative">
-            <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-            <Input id="login-email" type="email" autoComplete="email" autoFocus placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} className="h-12 pl-10" required />
-          </div>
-        </div>
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="login-password">Password</Label>
-            <AuthLink to="/forgot-password" returnTo={returnTo} className="text-xs text-primary hover:underline">
-              Forgot password?
-            </AuthLink>
-          </div>
-          <div className="relative">
-            <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-            <Input id="login-password" type="password" autoComplete="current-password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} className="h-12 pl-10" required />
-          </div>
-        </div>
-        <SubmitButton busy={busy} busyLabel="Logging in...">
-          Log in
-        </SubmitButton>
+        <AuthError>{error || (!hasSupabaseConfig && "O Supabase ainda não foi configurado neste ambiente.")}</AuthError>
+        <AuthField label="E-mail" name="email" type="email" autoComplete="username" required />
+        <AuthField label="Senha" name="password" type="password" autoComplete="current-password" required />
+        <SubmitButton busy={busy} disabled={!hasSupabaseConfig}>Entrar</SubmitButton>
+        <p className="text-center text-sm"><AuthLink to="/forgot-password">Esqueci minha senha</AuthLink></p>
       </form>
-      <p className="mt-6 text-center text-sm text-muted-foreground">
-        Don't have an account?{" "}
-        <AuthLink to="/register" returnTo={returnTo}>
-          Create one
-        </AuthLink>
-      </p>
     </AuthLayout>
   );
 }

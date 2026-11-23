@@ -1,68 +1,35 @@
 import { Link } from "@tanstack/react-router";
-import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { GoogleIcon } from "./GoogleIcon";
-import { signInWithProvider } from "@/lib/authMfaFlow";
-import { returnToSearch } from "@/lib/authReturnTo";
-
-// Small pieces the auth pages share.
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useId, useState } from "react";
 
 export function AuthError({ children }) {
-  if (!children) return null;
-  return (
-    <div role="alert" className="mb-4 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
-      {children}
-    </div>
-  );
+  return children ? <p role="alert" className="rounded-md bg-red-50 p-3 text-sm text-red-800">{children}</p> : null;
 }
 
-export function SubmitButton({ busy, busyLabel, children, ...props }) {
-  return (
-    <Button type="submit" className="h-12 w-full font-medium" disabled={busy} {...props}>
-      {busy ? (
-        <>
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
-          {busyLabel}
-        </>
-      ) : (
-        children
-      )}
-    </Button>
-  );
+export function AuthLink({ to, children }) {
+  return <Link to={to} className="font-medium text-primary hover:underline">{children}</Link>;
 }
 
-export function GoogleButton({ returnTo, onError }) {
-  return (
-    <Button
-      type="button"
-      variant="outline"
-      className="mb-6 h-12 w-full text-sm font-medium"
-      onClick={() => signInWithProvider("google", returnTo).catch((err) => onError(err.message || "Unable to sign in with Google"))}
-    >
-      <GoogleIcon className="mr-2 h-5 w-5" />
-      Continue with Google
-    </Button>
-  );
+export function SubmitButton({ busy, busyLabel = "Aguarde…", children, disabled = false }) {
+  return <Button type="submit" disabled={busy || disabled} className="min-h-11 w-full">{busy ? busyLabel : children}</Button>;
 }
 
-export function OrDivider() {
+export function AuthField({ label, name, type = "text", ...props }) {
+  const id = useId();
+  const [show, setShow] = useState(false);
   return (
-    <div className="relative mb-6">
-      <div className="absolute inset-0 flex items-center">
-        <div className="w-full border-t border-border" />
-      </div>
-      <div className="relative flex justify-center text-xs uppercase">
-        <span className="bg-card px-3 text-muted-foreground">or</span>
+    <div className="space-y-2">
+      <Label htmlFor={id}>{label}</Label>
+      <div className="flex items-center gap-2">
+        <Input id={id} name={name} type={show ? "text" : type} className="min-h-11" {...props} />
+        {type === "password" && (
+          <button type="button" className="min-h-11 text-xs text-primary" onClick={() => setShow(!show)} aria-pressed={show}>
+            {show ? "Ocultar" : "Mostrar"}
+          </button>
+        )}
       </div>
     </div>
-  );
-}
-
-// A link between auth screens that carries the way back (?returnTo=) along.
-export function AuthLink({ to, returnTo, className = "font-medium text-primary hover:underline", children }) {
-  return (
-    <Link to={to} search={returnToSearch(returnTo)} className={className}>
-      {children}
-    </Link>
   );
 }

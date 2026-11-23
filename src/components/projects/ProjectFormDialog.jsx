@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { base44 } from "@/api/base44Client";
-import { createProjectWithTasks } from "@/lib/server-fns";
+import { createProjectWithTasks, updateProject } from "@/api/agenda";
 import ResponsiveDialog from "@/components/ui-shared/ResponsiveDialog";
 import ProjectFormFields from "@/components/projects/ProjectFormFields";
 import ProjectTaskDrafts from "@/components/projects/ProjectTaskDrafts";
@@ -21,7 +19,6 @@ function initialProject(project) {
 }
 
 export default function ProjectFormDialog({ open, onOpenChange, project = null, onSaved }) {
-  const createProject = useServerFn(createProjectWithTasks);
   const [form, setForm] = useState(() => initialProject(project));
   const [drafts, setDrafts] = useState([]);
   const [saving, setSaving] = useState(false);
@@ -70,10 +67,10 @@ export default function ProjectFormDialog({ open, onOpenChange, project = null, 
     setError("");
     try {
       if (project) {
-        await base44.entities.Project.update(project.id, payload);
+        await updateProject(project.id, payload);
         toast.success("Projeto atualizado.");
       } else {
-        await createProject({ data: { project: payload, tasks: drafts } });
+        await createProjectWithTasks(payload, drafts);
         toast.success("Projeto e checklist salvos.");
       }
       onSaved?.();

@@ -1,53 +1,58 @@
 # Agenda de RH
 
-Aplicativo web para organizar tarefas do dia a dia, treinamentos obrigatórios e ações de desenvolvimento de lideranças. Feito para uso no navegador do computador, com versão de celular completa.
+Agenda de tarefas, treinamentos e eventos, com as telas Hoje, Tarefas, Projetos e Calendário. Esta versão usa React e TanStack Start, Supabase Auth e Postgres, com deploy na Vercel via Nitro.
 
-## Telas
+## Primeiro deploy
 
-- **Hoje** — tarefas de hoje, atrasadas, concluídas de hoje e eventos do dia.
-- **Tarefas** — quadro com Para iniciar, Em andamento e Finalizado, com busca e filtros.
-- **Projetos** — treinamentos e ações com evento e progresso do checklist.
-- **Calendário** — visão mensal com a agenda do dia selecionado.
-- **Minha conta** — nome, e-mail, troca de senha e saída.
+### 1. Criar o banco e habilitar os convites
 
-## Regras de data
+1. Crie um projeto no painel do Supabase.
+2. Abra **SQL Editor → New query**, cole o conteúdo de `supabase/migrations/202611230001_agenda.sql` e clique em **Run** uma vez no banco novo.
+3. Em **Authentication**, mantenha e-mail e senha habilitados e desative **Allow new users to sign up**. O administrador convida cada pessoa pelo painel. Configure o serviço SMTP para receber os convites e a recuperação em endereços externos à equipe do Supabase.
+4. Na opção **Connect** do projeto, copie a **Project URL** e a **Publishable key**. A chave administrativa, identificada como **Secret** ou **service_role**, fica no Supabase.
 
-Todas as datas são de calendário (`AAAA-MM-DD`), sem horário, e o "hoje" é calculado no fuso `America/Sao_Paulo`. Isso evita que uma tarefa apareça no dia errado por conversão de fuso. As regras ficam centralizadas em `src/lib/dates.js`:
+### 2. Importar o GitHub na Vercel
 
-- tarefa com período aparece em todos os dias do intervalo, incluindo fins de semana;
-- tarefa em aberto fica atrasada a partir do dia seguinte ao prazo final;
-- tarefa concluída continua visível com check em todas as datas agendadas;
-- evento e prazos de tarefas são independentes: o checklist segue aberto depois do fim do evento.
+1. Abra **Add New → Project**, importe o repositório **Agenda-RH** e confira o preset **TanStack Start** e o diretório raiz do projeto. Mantenha as configurações automáticas de build e saída.
+2. Em **Environment Variables**, adicione:
 
-## Dados e acesso
+   | Nome | Valor |
+   | --- | --- |
+   | `VITE_SUPABASE_URL` | Project URL do Supabase |
+   | `VITE_SUPABASE_PUBLISHABLE_KEY` | Publishable key do Supabase |
 
-Duas entidades: `Task` (tarefas) e `Project` (projetos, que também são os eventos). Cada registro pertence a quem o criou, e as regras de acesso garantem que cada conta só lê e altera os próprios registros; administradores da conta veem tudo.
+3. Clique em **Deploy**. Use a URL final da Vercel na configuração de autenticação do passo seguinte.
 
-A criação de projeto com checklist acontece em uma única operação no servidor (`src/lib/server-fns.js`). Se qualquer tarefa falhar, o projeto recém-criado é removido para não deixar registro parcial.
+### 3. Configurar os e-mails de acesso
 
-## Como rodar
+No Supabase, abra **Authentication → URL Configuration**. Defina **Site URL** como o domínio da Vercel, sem barra no final. Em **Redirect URLs**, adicione a URL completa de recuperação, como `https://seu-app.vercel.app/reset-password`. Para desenvolvimento, use outro ambiente Supabase com seu próprio Site URL.
+
+Em **Authentication → Email Templates**, ajuste os templates abaixo. O token vai para a tela do app e é verificado quando a pessoa clica em **Continuar**.
+
+**Invite user**
+
+```html
+<h2>Convite para a Agenda de RH</h2>
+<p><a href="{{ .SiteURL }}/register?token_hash={{ .TokenHash }}">Concluir cadastro</a></p>
+```
+
+**Reset password**
+
+```html
+<h2>Redefina sua senha da Agenda de RH</h2>
+<p><a href="{{ .SiteURL }}/reset-password?token_hash={{ .TokenHash }}">Definir nova senha</a></p>
+```
+
+Em **Authentication → Users → Add user → Send invitation**, envie um convite. A pessoa confirma o próprio e-mail pelo link e cadastra nome completo e senha. Teste convite, saída, login, recuperação e troca de senha com dados fictícios antes de começar a usar o app no trabalho.
+
+## Executar no computador
+
+Use Node.js 24. Copie `.env.example` para `.env.local`, preencha as duas variáveis e rode:
 
 ```bash
 npm install
-npm run dev      # ambiente de desenvolvimento
-npm run build    # build de produção
+npm run dev
+npm run build
 ```
 
-## Convites e senhas
-
-O cadastro público fica desligado: o primeiro acesso e os seguintes são feitos por convite.
-
-1. Abra **App Users** e convide o e-mail da pessoa com o papel `user` (ou `admin`).
-2. A pessoa recebe o convite, define a senha e cai direto na tela **Hoje**.
-3. "Esqueci minha senha" envia um link temporário para redefinir a senha. Links expirados ou já usados mostram uma mensagem com a opção de pedir outro.
-
-O envio de e-mails (convite e recuperação) usa o serviço configurado na plataforma, com o endereço de remetente do app.
-
-## Publicação
-
-Use o botão **Publicar** no editor. Depois de publicado, o app fica disponível no endereço da plataforma e pode receber um domínio próprio em **Domínios**.
-
-## Observações
-
-- O projeto está versionado no Git da plataforma; a sincronização com um repositório GitHub é feita pela integração de repositório da plataforma.
-- A autenticação e o banco são os da plataforma (com as regras de acesso por conta descritas acima), não um projeto Supabase externo. Para levar o código para Supabase + Vercel seria necessário reescrever a camada de autenticação e o acesso a dados.
+Cada conta acessa somente as próprias tarefas e projetos. A criação de projeto com tarefas usa uma única transação do Postgres. O banco novo começa vazio. Registros já existentes no Base44 precisam de uma migração separada, a partir dos CSVs exportados, com remapeamento de projetos, tarefas e proprietários. As contas precisam de novos convites no Supabase.

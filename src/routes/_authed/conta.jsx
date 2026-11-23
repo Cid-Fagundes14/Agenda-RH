@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { LogOut } from "lucide-react";
 import { toast } from "sonner";
-import { base44 } from "@/api/base44Client";
+import { getSupabase, resultOf } from "@/api/supabase";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/lib/AuthContext";
@@ -33,11 +33,7 @@ function ContaPage() {
     setSaving(true);
     setError("");
     try {
-      await base44.auth.changePassword({
-        userId: user.id,
-        currentPassword: current,
-        newPassword: next,
-      });
+      await resultOf(getSupabase().auth.updateUser({ password: next, current_password: current }));
       toast.success("Senha alterada.");
       setCurrent("");
       setNext("");

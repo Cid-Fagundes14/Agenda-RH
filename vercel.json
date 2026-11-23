@@ -1,0 +1,8 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "tanstack-start",
+  "headers": [
+    { "source": "/register", "headers": [{ "key": "Referrer-Policy", "value": "no-referrer" }] },
+    { "source": "/reset-password", "headers": [{ "key": "Referrer-Policy", "value": "no-referrer" }] }
+  ]
+}

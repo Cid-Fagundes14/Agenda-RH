@@ -1,4 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { RegisterPage } from "@/components/auth/RegisterPage";
+import { PasswordLinkPage } from "@/components/auth/PasswordLinkPage";
 
-export const Route = createFileRoute("/register")({ ssr: false, component: RegisterPage });
+export const Route = createFileRoute("/register")({ ssr: false, component: () => <PasswordLinkPage flow="invite" /> });
