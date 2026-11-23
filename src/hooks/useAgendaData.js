@@ -1,75 +1,51 @@
-import { useCallback, useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { base44 } from "@/api/base44Client";
+import { deleteTask as removeTask, listProjects, listTasks, updateTaskStage } from "@/api/agenda";
+import { useAuth } from "@/lib/AuthContext";
 
 export function useAgendaData() {
-  const [tasks, setTasks] = useState([]);
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const queryKey = ["agenda", user?.id];
+  const query = useQuery({
+    queryKey,
+    refetchOnWindowFocus: true,
+    enabled: !!user,
+    queryFn: async () => {
+      const [tasks, projects] = await Promise.all([listTasks(), listProjects()]);
+      return { tasks, projects };
+    },
+  });
 
-  const load = useCallback(async () => {
+  const refresh = () => queryClient.invalidateQueries({ queryKey });
+  async function setStage(task, stage) {
     try {
-      const [taskPage, projectPage] = await Promise.all([
-        base44.entities.Task.list({ sort: "-created_date", limit: 500 }),
-        base44.entities.Project.list({ sort: "-created_date", limit: 200 }),
-      ]);
-      setTasks(taskPage?.items ?? []);
-      setProjects(projectPage?.items ?? []);
-      setError(null);
-    } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
+      await updateTaskStage(task.id, stage);
+      await refresh();
+      toast.success(stage === "finalizado" ? "Tarefa concluída." : "Etapa atualizada.");
+    } catch {
+      toast.error("Não foi possível atualizar a tarefa. Tente novamente.");
     }
-  }, []);
+  }
 
-  useEffect(() => {
-    load();
-    const offTasks = base44.entities.Task.subscribe(() => load());
-    const offProjects = base44.entities.Project.subscribe(() => load());
-    return () => {
-      offTasks?.();
-      offProjects?.();
-    };
-  }, [load]);
+  const toggleTask = (task) => setStage(task, task.stage === "finalizado" ? "em_andamento" : "finalizado");
 
-  const setStage = useCallback(
-    async (task, stage) => {
-      const previous = tasks;
-      setTasks((prev) => prev.map((item) => (item.id === task.id ? { ...item, stage } : item)));
-      try {
-        await base44.entities.Task.update(task.id, { stage });
-        toast.success(stage === "finalizado" ? "Tarefa concluída." : "Etapa atualizada.");
-      } catch (err) {
-        setTasks(previous);
-        toast.error("Não foi possível atualizar a tarefa. Tente novamente.");
-      }
-    },
-    [tasks]
-  );
+  async function deleteTask(task) {
+    try {
+      await removeTask(task.id);
+      await refresh();
+      toast.success("Tarefa excluída.");
+    } catch (error) {
+      toast.error("Não foi possível excluir a tarefa.");
+      throw error;
+    }
+  }
 
-  const toggleTask = useCallback(
-    (task) => {
-      const nextStage = task.stage === "finalizado" ? "em_andamento" : "finalizado";
-      return setStage(task, nextStage);
-    },
-    [setStage]
-  );
-
-  const deleteTask = useCallback(
-    async (task) => {
-      try {
-        await base44.entities.Task.delete(task.id);
-        setTasks((prev) => prev.filter((item) => item.id !== task.id));
-        toast.success("Tarefa excluída.");
-      } catch (err) {
-        toast.error("Não foi possível excluir a tarefa.");
-        throw err;
-      }
-    },
-    []
-  );
-
-  return { tasks, projects, loading, error, refresh: load, setStage, toggleTask, deleteTask };
+  return {
+    tasks: query.data?.tasks ?? [],
+    projects: query.data?.projects ?? [],
+    loading: query.isPending,
+    error: query.error,
+    refresh, setStage, toggleTask, deleteTask,
+  };
 }

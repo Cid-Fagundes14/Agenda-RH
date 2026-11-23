@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { base44 } from "@/api/base44Client";
+import { deleteTask } from "@/api/agenda";
 import ResponsiveDialog from "@/components/ui-shared/ResponsiveDialog";
 import { PRIORITY_STYLES, STAGE_STYLES } from "@/lib/taskConstants";
 import { taskDueLabel } from "@/lib/dates";
@@ -28,7 +28,7 @@ export default function TaskDetailsDialog({ open, onOpenChange, task, project, o
   const remove = async () => {
     setDeleting(true);
     try {
-      await base44.entities.Task.delete(task.id);
+      await deleteTask(task.id);
       toast.success("Tarefa excluída.");
       setConfirmOpen(false);
       onOpenChange(false);

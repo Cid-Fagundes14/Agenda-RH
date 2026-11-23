@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { base44 } from "@/api/base44Client";
+import { saveTask } from "@/api/agenda";
 import ResponsiveDialog from "@/components/ui-shared/ResponsiveDialog";
 import TaskFormFields from "@/components/tasks/TaskFormFields";
 import { emptyTask } from "@/lib/taskConstants";
@@ -30,10 +30,10 @@ export default function TaskFormDialog({ open, onOpenChange, projects = [], task
     try {
       const payload = taskPayload(form);
       if (task) {
-        await base44.entities.Task.update(task.id, payload);
+        await saveTask(task.id, payload);
         toast.success("Tarefa atualizada.");
       } else {
-        await base44.entities.Task.create(payload);
+        await saveTask(null, payload);
         toast.success("Tarefa criada.");
       }
       onSaved?.();
