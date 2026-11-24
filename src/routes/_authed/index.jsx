@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AlertTriangle, Loader2, Plus } from "lucide-react";
 import TodayHeader, { CollapsibleSection, SectionTitle } from "@/components/home/TodayHeader";
 import TodayEvents from "@/components/home/TodayEvents";
+import UpcomingActivities from "@/components/home/UpcomingActivities";
 import TaskItem from "@/components/tasks/TaskItem";
 import TaskFormDialog from "@/components/tasks/TaskFormDialog";
 import TaskDetailsDialog from "@/components/tasks/TaskDetailsDialog";
@@ -98,7 +99,7 @@ function HojePage() {
           </button>
         </div>
       ) : (
-        <div className="grid gap-6 lg:grid-cols-[3fr_1fr] lg:items-start">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(240px,28%)] lg:items-start">
           <section className="lg:col-start-1 lg:row-start-1">
             {overdue.length > 0 ? (
               <>
@@ -125,8 +126,9 @@ function HojePage() {
             ) : null}
           </section>
 
-          <div className="lg:col-start-2 lg:row-span-3 lg:row-start-1">
+          <div className="contents lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:flex lg:min-w-0 lg:flex-col lg:gap-5">
             <TodayEvents projects={todayEvents} />
+            <UpcomingActivities tasks={tasks} projects={projects} today={today} onOpenTask={openDetails} />
           </div>
 
           <section className="lg:col-start-1 lg:row-start-2">

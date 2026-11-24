@@ -1,11 +1,12 @@
 import { Link } from "@tanstack/react-router";
-import { CalendarDays, CheckSquare, FolderKanban, LogOut, Settings, Sun } from "lucide-react";
+import { CalendarDays, CheckSquare, FolderKanban, GraduationCap, LogOut, Settings, Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const NAV_ITEMS = [
   { to: "/", label: "Hoje", icon: Sun },
   { to: "/tarefas", label: "Tarefas", icon: CheckSquare },
   { to: "/projetos", label: "Projetos", icon: FolderKanban },
+  { to: "/solicitacoes", label: "Solicitações", icon: GraduationCap },
   { to: "/calendario", label: "Calendário", icon: CalendarDays },
 ];
 

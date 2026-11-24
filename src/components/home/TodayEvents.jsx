@@ -4,7 +4,7 @@ import { projectEventLabel } from "@/lib/dates";
 
 export default function TodayEvents({ projects }) {
   return (
-    <aside className="lg:sticky lg:top-5">
+    <aside>
       <div className="mb-2 flex items-center gap-2">
         <CalendarDays className="h-4 w-4 text-muted-foreground" />
         <h2 className="font-heading text-[1.25rem] font-semibold tracking-tight text-foreground">
