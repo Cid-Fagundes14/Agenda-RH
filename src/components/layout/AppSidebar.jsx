@@ -1,11 +1,12 @@
 import { Link } from "@tanstack/react-router";
-import { CalendarDays, CheckSquare, FolderKanban, LogOut, Settings, Sun } from "lucide-react";
+import { CalendarDays, CheckSquare, FolderKanban, GraduationCap, LogOut, Settings, Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const NAV_ITEMS = [
   { to: "/", label: "Hoje", icon: Sun },
   { to: "/tarefas", label: "Tarefas", icon: CheckSquare },
   { to: "/projetos", label: "Projetos", icon: FolderKanban },
+  { to: "/solicitacoes", label: "Solicitações", icon: GraduationCap },
   { to: "/calendario", label: "Calendário", icon: CalendarDays },
 ];
 
@@ -19,21 +20,20 @@ export default function AppSidebar({ user, onLogout }) {
     .toUpperCase();
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-border bg-white lg:flex">
-      <div className="flex h-16 items-center border-b border-border px-5">
-        <Link to="/" className="font-display text-lg font-extrabold tracking-tight text-foreground">
+    <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col bg-sidebar text-sidebar-foreground lg:flex">
+      <div className="flex h-16 items-center border-b border-sidebar-border px-5">
+        <Link to="/" className="font-display text-lg font-extrabold tracking-tight text-sidebar-foreground">
           Agenda de RH
         </Link>
       </div>
 
-      <nav className="flex-1 space-y-1 px-3 py-4">
+      <nav className="flex-1 space-y-1 py-4 pl-3">
         {NAV_ITEMS.map((item) => (
           <Link
             key={item.to}
             to={item.to}
             activeOptions={{ exact: item.to === "/" }}
-            className="flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground"
-            activeProps={{ className: "bg-accent text-accent-foreground hover:bg-accent hover:text-accent-foreground" }}
+            className="agenda-nav-link flex min-h-11 items-center gap-3 rounded-l-lg px-3 text-sm font-medium"
           >
             <item.icon className="h-[18px] w-[18px]" />
             {item.label}
@@ -41,27 +41,26 @@ export default function AppSidebar({ user, onLogout }) {
         ))}
       </nav>
 
-      <div className="border-t border-border p-3">
+      <div className="border-t border-sidebar-border py-3 pl-3">
         <Link
           to="/conta"
-          className="flex items-center gap-3 rounded-md px-2 py-2 transition hover:bg-secondary"
-          activeProps={{ className: "bg-secondary" }}
+          className="agenda-nav-link flex items-center gap-3 rounded-l-lg py-2 pl-2 pr-3"
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-accent text-xs font-semibold text-accent-foreground">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-sidebar-accent text-xs font-semibold text-sidebar-accent-foreground">
             {initials}
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-sm font-medium text-foreground">
+            <span className="block truncate text-sm font-medium">
               {user?.full_name || "Minha conta"}
             </span>
-            <span className="block truncate text-xs text-muted-foreground">{user?.email}</span>
+            <span className="block truncate text-xs">{user?.email}</span>
           </span>
-          <Settings className="h-4 w-4 text-muted-foreground" />
+          <Settings className="h-4 w-4 shrink-0" />
         </Link>
         <button
           type="button"
           onClick={onLogout}
-          className="mt-1 flex min-h-11 w-full items-center gap-3 rounded-md px-3 text-sm font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground"
+          className="agenda-nav-link mt-1 flex min-h-11 w-full items-center gap-3 rounded-l-lg px-3 text-sm font-medium"
         >
           <LogOut className="h-[18px] w-[18px]" />
           Sair

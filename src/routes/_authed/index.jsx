@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AlertTriangle, Loader2, Plus } from "lucide-react";
 import TodayHeader, { CollapsibleSection, SectionTitle } from "@/components/home/TodayHeader";
 import TodayEvents from "@/components/home/TodayEvents";
+import UpcomingActivities from "@/components/home/UpcomingActivities";
 import TaskItem from "@/components/tasks/TaskItem";
 import TaskFormDialog from "@/components/tasks/TaskFormDialog";
 import TaskDetailsDialog from "@/components/tasks/TaskDetailsDialog";
@@ -87,7 +88,7 @@ function HojePage() {
           Carregando sua agenda...
         </div>
       ) : error ? (
-        <div className="card-surface flex flex-col items-start gap-3 p-5">
+        <div className="card-surface agenda-panel flex flex-col items-start gap-3 p-5">
           <p className="text-sm font-medium text-foreground">Não foi possível carregar sua agenda.</p>
           <button
             type="button"
@@ -98,7 +99,7 @@ function HojePage() {
           </button>
         </div>
       ) : (
-        <div className="grid gap-6 lg:grid-cols-[3fr_1fr] lg:items-start">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(240px,28%)] lg:items-start">
           <section className="lg:col-start-1 lg:row-start-1">
             {overdue.length > 0 ? (
               <>
@@ -125,14 +126,15 @@ function HojePage() {
             ) : null}
           </section>
 
-          <div className="lg:col-start-2 lg:row-span-3 lg:row-start-1">
+          <div className="contents lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:flex lg:min-w-0 lg:flex-col lg:gap-5">
             <TodayEvents projects={todayEvents} />
+            <UpcomingActivities tasks={tasks} projects={projects} today={today} onOpenTask={openDetails} />
           </div>
 
           <section className="lg:col-start-1 lg:row-start-2">
             <SectionTitle count={todayOpen.length}>Tarefas de hoje</SectionTitle>
             {todayOpen.length === 0 ? (
-              <div className="card-surface flex flex-col items-start gap-3 p-5">
+              <div className="card-surface agenda-panel flex flex-col items-start gap-3 p-5">
                 <p className="text-sm text-muted-foreground">Nenhuma tarefa agendada para hoje.</p>
                 <button
                   type="button"
@@ -161,7 +163,7 @@ function HojePage() {
           <section className="lg:col-start-1 lg:row-start-3">
             <CollapsibleSection title="Concluídas de hoje" count={todayDone.length}>
               {todayDone.length === 0 ? (
-                <p className="card-surface p-4 text-sm text-muted-foreground">
+                <p className="card-surface agenda-panel p-4 text-sm text-muted-foreground">
                   Nada concluído para hoje ainda.
                 </p>
               ) : (

@@ -62,7 +62,7 @@ function ProjetosPage() {
           </button>
         </div>
       ) : projects.length === 0 ? (
-        <div className="card-surface flex flex-col items-center gap-3 px-6 py-14 text-center">
+        <div className="card-surface agenda-panel flex flex-col items-center gap-3 px-6 py-14 text-center">
           <FolderKanban className="h-8 w-8 text-muted-foreground" />
           <p className="font-heading text-base font-semibold text-foreground">Nenhum projeto ainda</p>
           <p className="max-w-sm text-sm text-muted-foreground">

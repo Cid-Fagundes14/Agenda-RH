@@ -99,7 +99,7 @@ function TarefasPage() {
         </button>
       </header>
 
-      <div className="card-surface mb-4 space-y-3 p-3">
+      <div className="card-surface agenda-panel mb-4 space-y-3 p-3">
         <div className="relative">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -166,15 +166,16 @@ function TarefasPage() {
       ) : (
         <>
           {/* Celular: etapas em abas */}
-          <div className="mb-4 grid grid-cols-3 gap-1 rounded-md border border-border bg-secondary p-1 lg:hidden">
+          <div className="mb-4 grid grid-cols-3 gap-1 agenda-panel rounded-md border p-1 lg:hidden">
             {columns.map((column) => (
               <button
                 key={column.value}
                 type="button"
                 onClick={() => setStageTab(column.value)}
+                aria-pressed={stageTab === column.value}
                 className={cn(
                   "min-h-11 rounded-[5px] text-xs font-medium transition",
-                  stageTab === column.value ? "bg-white text-foreground shadow-sm" : "text-muted-foreground"
+                  stageTab === column.value ? "bg-white text-sidebar-primary shadow-sm" : "text-muted-foreground"
                 )}
               >
                 <span className="inline-flex items-center gap-1.5">
@@ -185,7 +186,7 @@ function TarefasPage() {
             ))}
           </div>
 
-          <div className="space-y-2 lg:hidden">
+          <div className="agenda-panel space-y-2 rounded-lg border p-3 lg:hidden">
             {columns
               .filter((column) => column.value === stageTab)
               .flatMap((column) => column.items)
@@ -209,10 +210,10 @@ function TarefasPage() {
           {/* Computador: quadro com três colunas */}
           <div className="hidden gap-4 lg:grid lg:grid-cols-3">
             {columns.map((column) => (
-              <section key={column.value} className="rounded-lg border border-border bg-white/60 p-3">
+              <section key={column.value} className="agenda-panel rounded-lg border p-3">
                 <header className="mb-3 flex items-center gap-2">
                   <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: column.color }} />
-                  <h2 className="font-heading text-sm font-semibold text-foreground">{column.label}</h2>
+                  <h2 className="font-heading text-sm font-semibold text-sidebar-primary">{column.label}</h2>
                   <span className="text-xs font-medium text-muted-foreground">{column.items.length}</span>
                 </header>
                 <div className="space-y-2">
