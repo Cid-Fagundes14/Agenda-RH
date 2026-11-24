@@ -12,7 +12,7 @@ const CERTIFICATE_OPTIONS = [
   { value: "nao", label: "Não" },
 ];
 
-export default function TrainingRequestForm({ request, titles, onDismiss, onSave }) {
+export default function TrainingRequestForm({ request, titles, departments, onDismiss, onSave }) {
   const [values, setValues] = useState(() => ({
     requested_date: todayISO(),
     status: "pendente",
@@ -120,7 +120,12 @@ export default function TrainingRequestForm({ request, titles, onDismiss, onSave
           <legend className="mb-2 text-sm font-semibold">Pedido</legend>
           {input("employee_name", "Nome do colaborador *", { required: true, maxLength: 160 })}
           {input("registration", "Matrícula", { maxLength: 80 })}
-          {input("department", "Departamento / área", { maxLength: 160 })}
+          <div className="min-w-0">
+            {input("department", "Departamento / Área", { maxLength: 160, list: "training-department-options" })}
+            <datalist id="training-department-options">
+              {departments.map(({ id, title }) => <option key={id} value={title} />)}
+            </datalist>
+          </div>
           {input("requester", "Gestor solicitante", { maxLength: 160 })}
           <div className="min-w-0 sm:col-span-2">
             {input("training_title", "Treinamento solicitado *", { required: true, maxLength: 200, list: "training-title-options" })}
