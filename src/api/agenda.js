@@ -32,6 +32,7 @@ export const updateTaskStage = (id, stage) => write("tasks", id, { stage });
 export const updateProject = (id, project) => write("projects", id, projectFields(project));
 
 export const listTrainingRequests = () => list("training_requests");
+export const listTrainingDepartments = () => list("training_departments");
 export const listTrainingTitles = () => list("training_titles");
 export const saveTrainingRequest = (id, fields) => write("training_requests", id, fields);
 

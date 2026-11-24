@@ -1,18 +1,19 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { Plus, Search } from "lucide-react";
+import { Download, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
-import { listTrainingRequests, listTrainingTitles, saveTrainingRequest } from "@/api/agenda";
+import { listTrainingDepartments, listTrainingRequests, listTrainingTitles, saveTrainingRequest } from "@/api/agenda";
 import TrainingRequestForm from "@/components/training/TrainingRequestForm";
 import TrainingSummary from "@/components/training/TrainingSummary";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/AuthContext";
 import { formatBR } from "@/lib/dates";
+import { exportTrainingExcel, exportTrainingPdf } from "@/lib/trainingExport";
 import { compareTrainingUrgency, trainingSearchKey, TRAINING_STATUSES, TRAINING_URGENCIES } from "@/lib/trainingRequests";
 
 export const Route = createFileRoute("/_authed/solicitacoes")({
-  head: () => ({ meta: [{ title: "Solicitações de treinamento · Agenda de RH" }] }),
+  head: () => ({ meta: [{ title: "Solicitações de Treinamento · Agenda de RH" }] }),
   component: TrainingRequestsPage,
 });
 
@@ -36,6 +37,8 @@ function TrainingRequestsPage() {
   const queryKey = ["training-requests", user?.id];
   const [search, setSearch] = useState("");
   const [training, setTraining] = useState("");
+  const [department, setDepartment] = useState("");
+  const [exporting, setExporting] = useState("");
   const [status, setStatus] = useState("");
   const [urgency, setUrgency] = useState("");
   const [form, setForm] = useState(null);
@@ -43,19 +46,45 @@ function TrainingRequestsPage() {
     queryKey,
     enabled: !!user,
     queryFn: async () => {
-      const [requests, titles] = await Promise.all([listTrainingRequests(), listTrainingTitles()]);
-      return { requests, titles: titles.sort((a, b) => a.title.localeCompare(b.title, "pt-BR")) };
+      const [requests, titles, departments] = await Promise.all([
+        listTrainingRequests(), listTrainingTitles(), listTrainingDepartments(),
+      ]);
+      const byTitle = (a, b) => a.title.localeCompare(b.title, "pt-BR");
+      return { requests, titles: titles.sort(byTitle), departments: departments.sort(byTitle) };
     },
   });
-  const { requests = [], titles = [] } = query.data ?? {};
+  const { requests = [], titles = [], departments = [] } = query.data ?? {};
   const term = trainingSearchKey(search);
   const visible = requests.filter((request) => (
     (!training || request.training_title === training) &&
+    (!department || request.department === department) &&
     (!status || request.status === status) &&
     (!urgency || request.urgency === urgency) &&
     [request.employee_name, request.registration, request.department, request.requester, request.training_title]
       .some((value) => trainingSearchKey(value).includes(term))
   )).sort(compareTrainingUrgency);
+
+  const exportResults = async (format) => {
+    setExporting(format);
+    try {
+      if (format === "pdf") {
+        const filters = [
+          training && `Treinamento: ${training}`,
+          department && `Área: ${department}`,
+          status && `Status: ${TRAINING_STATUSES.find(({ value }) => value === status)?.label}`,
+          urgency && `Urgência: ${TRAINING_URGENCIES.find(({ value }) => value === urgency)?.label}`,
+          term && `Busca: ${search.trim()}`,
+        ].filter(Boolean);
+        await exportTrainingPdf(visible, filters);
+      } else {
+        await exportTrainingExcel(visible);
+      }
+    } catch {
+      toast.error("Não foi possível exportar as solicitações. Tente novamente.");
+    } finally {
+      setExporting("");
+    }
+  };
 
   const save = async (id, fields) => {
     await saveTrainingRequest(id, fields);
@@ -68,7 +97,7 @@ function TrainingRequestsPage() {
     <div>
       <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h1 className="font-display text-2xl font-bold tracking-tight sm:text-[2.25rem] sm:leading-tight">
-          Solicitações de treinamento
+          Solicitações de Treinamento
         </h1>
         <button
           type="button"
@@ -97,15 +126,39 @@ function TrainingRequestsPage() {
                 <Input
                   aria-label="Buscar solicitações"
                   placeholder="Buscar colaborador, matrícula, treinamento ou área"
+                  maxLength={200}
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   className="min-h-11 bg-white pl-9"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
                 <RequestFilter label="Todos os treinamentos" value={training} onChange={setTraining} options={titles.map(({ title }) => ({ value: title, label: title }))} />
+                <RequestFilter label="Todos os departamentos" value={department} onChange={setDepartment} options={departments.map(({ title }) => ({ value: title, label: title }))} />
                 <RequestFilter label="Todos os status" value={status} onChange={setStatus} options={TRAINING_STATUSES} />
                 <RequestFilter label="Todas as urgências" value={urgency} onChange={setUrgency} options={TRAINING_URGENCIES} />
+              </div>
+              <div className="flex flex-wrap items-center justify-between gap-2 border-t pt-3">
+                <p aria-live="polite" className="text-xs text-muted-foreground">
+                  {visible.length} {visible.length === 1 ? "solicitação nos resultados" : "solicitações nos resultados"}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { value: "pdf", label: "Exportar PDF" },
+                    { value: "xlsx", label: "Exportar Excel" },
+                  ].map(({ value, label }) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => exportResults(value)}
+                      disabled={!visible.length || !!exporting}
+                      className="inline-flex min-h-11 items-center gap-1.5 rounded-md border bg-white px-3 text-xs font-semibold hover:bg-secondary disabled:opacity-50"
+                    >
+                      <Download className="h-4 w-4" aria-hidden="true" />
+                      {exporting === value ? "Exportando..." : label}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -150,7 +203,7 @@ function TrainingRequestsPage() {
       ) : null}
 
       {form ? (
-        <TrainingRequestForm request={form.id ? form : null} titles={titles} onDismiss={() => setForm(null)} onSave={save} />
+        <TrainingRequestForm request={form.id ? form : null} titles={titles} departments={departments} onDismiss={() => setForm(null)} onSave={save} />
       ) : null}
     </div>
   );
