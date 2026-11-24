@@ -13,7 +13,7 @@ export default function TodayEvents({ projects }) {
       </div>
 
       {projects.length === 0 ? (
-        <div className="card-surface p-4 text-sm text-muted-foreground">
+        <div className="card-surface agenda-panel p-4 text-sm text-muted-foreground">
           Nenhum evento do seu time hoje.
         </div>
       ) : (
@@ -25,7 +25,7 @@ export default function TodayEvents({ projects }) {
                 key={project.id}
                 to="/projetos/$projectId"
                 params={{ projectId: project.id }}
-                className="flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-border bg-white px-4 text-sm font-medium text-foreground"
+                className="agenda-panel flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-4 text-sm font-medium text-foreground"
               >
                 <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: project.color }} />
                 <span className="max-w-[220px] truncate">{project.name}</span>
@@ -39,7 +39,7 @@ export default function TodayEvents({ projects }) {
                 key={project.id}
                 to="/projetos/$projectId"
                 params={{ projectId: project.id }}
-                className="card-surface block p-3 transition hover:border-slate-300"
+                className="card-surface agenda-panel block p-3 transition hover:border-slate-300"
                 style={{ borderLeft: `4px solid ${project.color}` }}
               >
                 <p className="text-sm font-semibold text-foreground">{project.name}</p>

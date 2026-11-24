@@ -108,14 +108,18 @@ export function compareTaskStartTime(a, b) {
   return (taskStartTime(a) || "24:00").localeCompare(taskStartTime(b) || "24:00");
 }
 
-export function taskScheduleLabel(task) {
+export function taskDateLabel(task) {
   const range = taskRange(task);
   if (!range) return "Sem data";
-  const dates = range.start === range.end
+  return range.start === range.end
     ? formatBR(range.end)
     : `${formatBRShort(range.start)} a ${formatBR(range.end)}`;
+}
+
+export function taskScheduleLabel(task) {
+  const date = taskDateLabel(task);
   const time = taskStartTime(task);
-  return time ? `${dates} · ${time}` : dates;
+  return time ? `${date} · ${time}` : date;
 }
 
 // ---- Projetos / eventos ----

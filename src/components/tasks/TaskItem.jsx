@@ -1,9 +1,10 @@
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PRIORITY_STYLES, STAGE_STYLES } from "@/lib/taskConstants";
-import { taskScheduleLabel } from "@/lib/dates";
+import { taskDateLabel, taskStartTime } from "@/lib/dates";
 
 export default function TaskItem({ task, project, overdue = false, onToggle, onOpen }) {
+  const time = taskStartTime(task);
   const done = task.stage === "finalizado";
   const priority = PRIORITY_STYLES[task.priority] || PRIORITY_STYLES.media;
   const stage = STAGE_STYLES[task.stage] || STAGE_STYLES.para_iniciar;
@@ -11,7 +12,7 @@ export default function TaskItem({ task, project, overdue = false, onToggle, onO
   return (
     <div
       className={cn(
-        "card-surface flex items-start gap-2 p-3 transition hover:border-slate-300",
+        "card-surface agenda-panel flex items-start gap-2 p-3 transition hover:border-slate-400",
         overdue && "border-l-4 border-l-[#DC2626]",
         done && "opacity-80"
       )}
@@ -37,21 +38,28 @@ export default function TaskItem({ task, project, overdue = false, onToggle, onO
         onClick={() => onOpen?.(task)}
         className="min-w-0 flex-1 py-1 text-left"
       >
-        <p
-          className={cn(
-            "truncate text-sm font-medium text-foreground",
-            done && "line-through decoration-slate-400 text-muted-foreground"
-          )}
-        >
-          {task.title}
-        </p>
+        <div className="flex items-center gap-2">
+          {time ? (
+            <time className="shrink-0 rounded-md bg-white px-2 py-0.5 text-xs font-semibold tabular-nums text-sidebar-primary">
+              {time}
+            </time>
+          ) : null}
+          <p
+            className={cn(
+              "truncate text-sm font-medium text-foreground",
+              done && "line-through decoration-slate-400 text-muted-foreground"
+            )}
+          >
+            {task.title}
+          </p>
+        </div>
         <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1.5">
             <span className="h-2 w-2 rounded-full" style={{ backgroundColor: priority.color }} />
             {priority.label}
           </span>
           <span className="text-slate-300">·</span>
-          <span className={cn(overdue && "font-semibold text-[#DC2626]")}>{taskScheduleLabel(task)}</span>
+          <span className={cn(overdue && "font-semibold text-[#DC2626]")}>{taskDateLabel(task)}</span>
           {project ? (
             <>
               <span className="text-slate-300">·</span>

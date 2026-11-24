@@ -9,10 +9,10 @@ export default function ProjectCard({ project, doneCount, totalCount }) {
     <Link
       to="/projetos/$projectId"
       params={{ projectId: project.id }}
-      className="card-surface block p-4 transition hover:border-slate-300"
+      className="card-surface agenda-panel block border-l-4 p-4 transition hover:border-slate-400"
+      style={{ borderLeftColor: project.color }}
     >
       <div className="flex items-start gap-3">
-        <span className="mt-1 h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: project.color }} />
         <div className="min-w-0 flex-1">
           <p className="truncate font-heading text-base font-semibold text-foreground">{project.name}</p>
           <p className="mt-0.5 text-xs text-muted-foreground">{projectEventLabel(project)}</p>
@@ -27,7 +27,7 @@ export default function ProjectCard({ project, doneCount, totalCount }) {
           </span>
           <span className="text-muted-foreground">{percent}%</span>
         </div>
-        <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-secondary">
+        <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
           <div
             className="h-full rounded-full"
             style={{ width: `${percent}%`, backgroundColor: project.color }}

@@ -87,7 +87,7 @@ function HojePage() {
           Carregando sua agenda...
         </div>
       ) : error ? (
-        <div className="card-surface flex flex-col items-start gap-3 p-5">
+        <div className="card-surface agenda-panel flex flex-col items-start gap-3 p-5">
           <p className="text-sm font-medium text-foreground">Não foi possível carregar sua agenda.</p>
           <button
             type="button"
@@ -132,7 +132,7 @@ function HojePage() {
           <section className="lg:col-start-1 lg:row-start-2">
             <SectionTitle count={todayOpen.length}>Tarefas de hoje</SectionTitle>
             {todayOpen.length === 0 ? (
-              <div className="card-surface flex flex-col items-start gap-3 p-5">
+              <div className="card-surface agenda-panel flex flex-col items-start gap-3 p-5">
                 <p className="text-sm text-muted-foreground">Nenhuma tarefa agendada para hoje.</p>
                 <button
                   type="button"
@@ -161,7 +161,7 @@ function HojePage() {
           <section className="lg:col-start-1 lg:row-start-3">
             <CollapsibleSection title="Concluídas de hoje" count={todayDone.length}>
               {todayDone.length === 0 ? (
-                <p className="card-surface p-4 text-sm text-muted-foreground">
+                <p className="card-surface agenda-panel p-4 text-sm text-muted-foreground">
                   Nada concluído para hoje ainda.
                 </p>
               ) : (
