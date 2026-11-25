@@ -14,6 +14,7 @@ export const Route = createRootRoute({
       { name: "description", content: "Tarefas, treinamentos obrigatórios e desenvolvimento de lideranças em um só lugar." },
     ],
     links: [
+      { rel: "icon", href: "/agenda-rh-icon.png", sizes: "48x48", type: "image/png" },
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
