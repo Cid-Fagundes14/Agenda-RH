@@ -22,8 +22,15 @@ export default function AppSidebar({ user, onLogout }) {
   return (
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col bg-sidebar text-sidebar-foreground lg:flex">
       <div className="flex h-16 items-center border-b border-sidebar-border px-5">
-        <Link to="/" className="font-display text-lg font-extrabold tracking-tight text-sidebar-foreground">
-          Agenda de RH
+        <Link to="/" className="inline-flex items-center gap-2.5 font-display text-lg font-extrabold tracking-tight text-sidebar-foreground">
+          <img
+            src="/agenda-rh-icon.png"
+            alt=""
+            width={32}
+            height={32}
+            className="size-8 shrink-0 rounded-lg ring-1 ring-white/25"
+          />
+          <span>Agenda de RH</span>
         </Link>
       </div>
 
