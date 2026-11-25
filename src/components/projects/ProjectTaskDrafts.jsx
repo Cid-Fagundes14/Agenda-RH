@@ -82,7 +82,7 @@ export default function ProjectTaskDrafts({ drafts, onChange }) {
                   type="button"
                   onClick={() => startEdit(index)}
                   aria-label={`Editar ${task.title}`}
-                  className="flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition hover:bg-white hover:text-foreground"
+                  className="flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition hover:bg-card hover:text-foreground"
                 >
                   <Pencil className="h-4 w-4" />
                 </button>
@@ -90,7 +90,7 @@ export default function ProjectTaskDrafts({ drafts, onChange }) {
                   type="button"
                   onClick={() => remove(index)}
                   aria-label={`Remover ${task.title}`}
-                  className="flex h-11 w-11 items-center justify-center rounded-md text-[#B91C1C] transition hover:bg-[#FEF2F2]"
+                  className="flex h-11 w-11 items-center justify-center rounded-md agenda-danger-text transition hover:bg-secondary"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -101,12 +101,12 @@ export default function ProjectTaskDrafts({ drafts, onChange }) {
       ) : null}
 
       {editorOpen ? (
-        <div className="rounded-md border border-border bg-white p-3">
+        <div className="rounded-md border border-border bg-card p-3">
           <p className="mb-3 text-sm font-semibold text-foreground">
             {editingIndex === null ? "Nova tarefa do checklist" : "Editar tarefa do checklist"}
           </p>
           <TaskFormFields value={draft} onChange={setDraft} hideProject />
-          {error ? <p className="mt-3 text-xs font-medium text-[#B91C1C]">{error}</p> : null}
+          {error ? <p className="mt-3 text-xs font-medium agenda-danger-text">{error}</p> : null}
           <div className="mt-3 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
             <button
               type="button"
@@ -118,7 +118,7 @@ export default function ProjectTaskDrafts({ drafts, onChange }) {
             <button
               type="button"
               onClick={commit}
-              className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-[#1D4ED8]"
+              className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-[var(--agenda-button-hover)]"
             >
               {editingIndex === null ? "Adicionar ao checklist" : "Salvar tarefa"}
             </button>

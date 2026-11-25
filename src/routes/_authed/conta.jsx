@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { getSupabase, resultOf } from "@/api/supabase";
+import ThemeSettings from "@/components/layout/ThemeSettings";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/lib/AuthContext";
@@ -67,6 +68,8 @@ function ContaPage() {
         </dl>
       </section>
 
+      <ThemeSettings />
+
       <section className="card-surface mt-4 p-5">
         <h2 className="font-heading text-base font-semibold text-foreground">Alterar senha</h2>
         <form onSubmit={submit} className="mt-4 space-y-4">
@@ -108,7 +111,7 @@ function ContaPage() {
           </div>
 
           {error ? (
-            <p className="rounded-md border border-[#FECACA] bg-[#FEF2F2] px-3 py-2 text-xs font-medium text-[#B91C1C]">
+            <p className="rounded-md border agenda-danger-surface px-3 py-2 text-xs font-medium">
               {error}
             </p>
           ) : null}
@@ -116,7 +119,7 @@ function ContaPage() {
           <button
             type="submit"
             disabled={saving}
-            className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:bg-[#1D4ED8] disabled:opacity-60"
+            className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:bg-[var(--agenda-button-hover)] disabled:opacity-60"
           >
             {saving ? "Salvando..." : "Salvar nova senha"}
           </button>
@@ -126,7 +129,7 @@ function ContaPage() {
       <button
         type="button"
         onClick={() => logout()}
-        className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-md border border-border bg-white px-4 text-sm font-medium text-foreground transition hover:bg-secondary"
+        className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-md border border-border bg-card px-4 text-sm font-medium text-foreground transition hover:bg-secondary"
       >
         <LogOut className="h-4 w-4" />
         Sair

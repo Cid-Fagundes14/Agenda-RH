@@ -8,11 +8,11 @@ export default function StageSelect({ task, onChange, className = "" }) {
       value={task.stage}
       onChange={(event) => onChange(task, event.target.value)}
       aria-label={`Etapa de ${task.title}`}
-      className={`min-h-11 w-full rounded-md border border-border bg-white px-2 text-xs font-medium ${className}`}
-      style={{ color: stage.color }}
+      className={`agenda-stage min-h-11 w-full rounded-md border border-border bg-card px-2 text-xs font-medium ${className}`}
+      data-stage={stage.value}
     >
       {STAGES.map((item) => (
-        <option key={item.value} value={item.value}>
+        <option key={item.value} value={item.value} className="text-foreground">
           {item.label}
         </option>
       ))}

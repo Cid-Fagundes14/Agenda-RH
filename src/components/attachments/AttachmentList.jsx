@@ -47,7 +47,7 @@ export default function AttachmentList({ query, disabled, exclude = [] }) {
   }
 
   if (query.isError) return (
-    <p className="text-sm text-destructive">
+    <p className="text-sm agenda-danger-text">
       Não foi possível carregar os anexos.{" "}
       <button type="button" className="underline" onClick={() => query.refetch()}>Tentar novamente</button>
     </p>
@@ -74,7 +74,7 @@ export default function AttachmentList({ query, disabled, exclude = [] }) {
             </button>
             <button type="button" aria-label={`Excluir anexo ${file.file_name}`} title="Excluir anexo"
               onClick={() => setSelected(file)} disabled={disabled || deleting}
-              className="grid size-10 shrink-0 place-items-center rounded-md text-destructive hover:bg-secondary disabled:opacity-40">
+              className="grid size-10 shrink-0 place-items-center rounded-md agenda-danger-text hover:bg-secondary disabled:opacity-40">
               <Trash2 className="size-4" />
             </button>
           </li>
@@ -88,7 +88,7 @@ export default function AttachmentList({ query, disabled, exclude = [] }) {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={deleting}>Cancelar</AlertDialogCancel>
-            <AlertDialogAction disabled={deleting} className="bg-destructive text-destructive-foreground hover:bg-destructive"
+            <AlertDialogAction disabled={deleting} className="bg-destructive text-destructive-foreground hover:bg-destructive hover:brightness-90"
               onClick={(event) => { event.preventDefault(); remove(); }}>
               {deleting ? "Excluindo..." : "Excluir anexo"}
             </AlertDialogAction>

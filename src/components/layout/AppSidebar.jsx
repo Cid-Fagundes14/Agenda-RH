@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { CalendarDays, CheckSquare, FolderKanban, GraduationCap, LogOut, Settings, Sun } from "lucide-react";
+import ThemeToggle from "@/components/layout/ThemeToggle";
 import { cn } from "@/lib/utils";
 
 export const NAV_ITEMS = [
@@ -21,8 +22,8 @@ export default function AppSidebar({ user, onLogout }) {
 
   return (
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col bg-sidebar text-sidebar-foreground lg:flex">
-      <div className="flex h-16 items-center border-b border-sidebar-border px-5">
-        <Link to="/" className="inline-flex items-center gap-2.5 font-display text-lg font-extrabold tracking-tight text-sidebar-foreground">
+      <div className="flex h-16 items-center justify-between gap-1 border-b border-sidebar-border px-3">
+        <Link to="/" className="inline-flex items-center gap-2 whitespace-nowrap font-display text-base font-extrabold tracking-tight text-sidebar-foreground">
           <img
             src="/agenda-rh-icon.png"
             alt=""
@@ -32,6 +33,7 @@ export default function AppSidebar({ user, onLogout }) {
           />
           <span>Agenda de RH</span>
         </Link>
+        <ThemeToggle />
       </div>
 
       <nav className="flex-1 space-y-1 py-4 pl-3">

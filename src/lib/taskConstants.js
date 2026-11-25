@@ -5,9 +5,9 @@ export const PRIORITIES = [
 ];
 
 export const STAGES = [
-  { value: "para_iniciar", label: "Para iniciar", color: "#64748B", bg: "#F1F5F9" },
-  { value: "em_andamento", label: "Em andamento", color: "#2563EB", bg: "#EFF6FF" },
-  { value: "finalizado", label: "Finalizado", color: "#059669", bg: "#ECFDF5" },
+  { value: "para_iniciar", label: "Para iniciar", color: "#64748B" },
+  { value: "em_andamento", label: "Em andamento", color: "#2563EB" },
+  { value: "finalizado", label: "Finalizado", color: "#059669" },
 ];
 
 export const PRIORITY_STYLES = PRIORITIES.reduce((acc, item) => {

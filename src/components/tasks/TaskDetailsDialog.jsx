@@ -57,7 +57,7 @@ export default function TaskDetailsDialog({ open, onOpenChange, task, project, o
       <button
         type="button"
         onClick={() => onEdit?.(task)}
-        className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-[#1D4ED8]"
+        className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-[var(--agenda-button-hover)]"
       >
         Editar
       </button>
@@ -65,7 +65,7 @@ export default function TaskDetailsDialog({ open, onOpenChange, task, project, o
         type="button"
         onClick={() => setConfirmOpen(true)}
         disabled={!attachments.data || attachments.isError || deleting}
-        className="ml-auto min-h-11 rounded-md px-3 text-sm font-medium text-[#B91C1C] transition hover:bg-[#FEF2F2]"
+        className="ml-auto min-h-11 rounded-md px-3 text-sm font-medium agenda-danger-text transition hover:bg-secondary"
       >
         Excluir
       </button>
@@ -78,7 +78,7 @@ export default function TaskDetailsDialog({ open, onOpenChange, task, project, o
         <h3 className="font-heading text-xl font-semibold leading-snug text-foreground">{task.title}</h3>
 
         <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
-          <span className="rounded-full px-2 py-1 font-medium" style={{ backgroundColor: stage.bg, color: stage.color }}>
+          <span className="agenda-stage-badge rounded-full px-2 py-1 font-medium" data-stage={stage.value}>
             {stage.label}
           </span>
           <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-2 py-1 font-medium text-foreground">
@@ -137,7 +137,7 @@ export default function TaskDetailsDialog({ open, onOpenChange, task, project, o
                 remove();
               }}
               disabled={deleting}
-              className="min-h-11 bg-[#DC2626] text-white hover:bg-[#B91C1C]"
+              className="min-h-11 bg-destructive text-destructive-foreground hover:brightness-90"
             >
               {deleting ? "Excluindo..." : "Excluir tarefa"}
             </AlertDialogAction>

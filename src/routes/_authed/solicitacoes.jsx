@@ -23,7 +23,7 @@ function RequestFilter({ label, value, onChange, options }) {
       aria-label={label}
       value={value}
       onChange={(event) => onChange(event.target.value)}
-      className="min-h-11 min-w-0 rounded-md border bg-white px-2 text-sm focus-visible:outline-primary"
+      className="min-h-11 min-w-0 rounded-md border bg-card px-2 text-sm focus-visible:outline-primary"
     >
       <option value="">{label}</option>
       {options.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
@@ -129,7 +129,7 @@ function TrainingRequestsPage() {
                   maxLength={200}
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
-                  className="min-h-11 bg-white pl-9"
+                  className="min-h-11 bg-card pl-9"
                 />
               </div>
               <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
@@ -152,7 +152,7 @@ function TrainingRequestsPage() {
                       type="button"
                       onClick={() => exportResults(value)}
                       disabled={!visible.length || !!exporting}
-                      className="inline-flex min-h-11 items-center gap-1.5 rounded-md border bg-white px-3 text-xs font-semibold hover:bg-secondary disabled:opacity-50"
+                      className="inline-flex min-h-11 items-center gap-1.5 rounded-md border bg-card px-3 text-xs font-semibold hover:bg-secondary disabled:opacity-50"
                     >
                       <Download className="h-4 w-4" aria-hidden="true" />
                       {exporting === value ? "Exportando..." : label}

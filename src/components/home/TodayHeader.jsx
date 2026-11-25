@@ -14,7 +14,7 @@ export default function TodayHeader({ today, onNewTask }) {
       <button
         type="button"
         onClick={onNewTask}
-        className="hidden min-h-11 items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-[#1D4ED8] sm:inline-flex"
+        className="hidden min-h-11 items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-[var(--agenda-button-hover)] sm:inline-flex"
       >
         <Plus className="h-4 w-4" strokeWidth={2.5} />
         Nova tarefa

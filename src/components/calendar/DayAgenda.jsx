@@ -60,7 +60,7 @@ export default function DayAgenda({ date, tasks, projects, onToggleTask, onOpenT
                     <span
                       className={cn(
                         "flex h-5 w-5 items-center justify-center rounded-[5px] border",
-                        done ? "border-[#059669] bg-[#059669] text-white" : "border-slate-300 bg-white"
+                        done ? "agenda-task-checked" : "border-slate-300 bg-card dark:border-input"
                       )}
                     >
                       {done ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : null}
@@ -76,11 +76,11 @@ export default function DayAgenda({ date, tasks, projects, onToggleTask, onOpenT
                         <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: priority.color }} />
                         {priority.label}
                       </span>
-                      <span className="rounded-full px-1.5 py-0.5 font-medium" style={{ backgroundColor: stage.bg, color: stage.color }}>
+                      <span className="agenda-stage-badge rounded-full px-1.5 py-0.5 font-medium" data-stage={stage.value}>
                         {stage.label}
                       </span>
                       {isDue ? (
-                        <span className="rounded-full bg-[#FEF2F2] px-1.5 py-0.5 font-semibold text-[#B91C1C]">
+                        <span className="agenda-danger-surface rounded-full px-1.5 py-0.5 font-semibold">
                           Prazo final
                         </span>
                       ) : null}

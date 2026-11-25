@@ -53,11 +53,11 @@ function CalendarioPage() {
           <button
             type="button"
             onClick={goToday}
-            className="min-h-11 rounded-md border border-border bg-white px-3 text-sm font-medium transition hover:bg-secondary"
+            className="min-h-11 rounded-md border border-border bg-card px-3 text-sm font-medium transition hover:bg-secondary"
           >
             Hoje
           </button>
-          <div className="flex items-center rounded-md border border-border bg-white">
+          <div className="flex items-center rounded-md border border-border bg-card">
             <button
               type="button"
               onClick={() => shiftMonth(-1)}

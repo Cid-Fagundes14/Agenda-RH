@@ -72,7 +72,7 @@ function ProjetoDetalhePage() {
         <p className="font-heading text-base font-semibold text-foreground">
           {error ? "Não foi possível carregar o projeto." : "Projeto não encontrado."}
         </p>
-        <Link to="/projetos" className="mt-3 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-primary">
+        <Link to="/projetos" className="mt-3 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium agenda-link">
           <ArrowLeft className="h-4 w-4" />
           Voltar para projetos
         </Link>
@@ -113,7 +113,7 @@ function ProjetoDetalhePage() {
                 type="button"
                 disabled={!attachments.data || attachments.isError || deleting}
                 onClick={() => { setDeleteTasks(false); setConfirmDelete(true); }}
-                className="inline-flex min-h-11 items-center gap-2 rounded-md px-3 text-sm font-medium text-destructive hover:bg-secondary disabled:opacity-50"
+                className="inline-flex min-h-11 items-center gap-2 rounded-md px-3 text-sm font-medium agenda-danger-text hover:bg-secondary disabled:opacity-50"
               >
                 <Trash2 className="h-4 w-4" />
                 Excluir evento
@@ -152,7 +152,7 @@ function ProjetoDetalhePage() {
             setEditingTask(null);
             setTaskFormOpen(true);
           }}
-          className="inline-flex min-h-11 items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-[#1D4ED8]"
+          className="inline-flex min-h-11 items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-[var(--agenda-button-hover)]"
         >
           <Plus className="h-4 w-4" strokeWidth={2.5} />
           Adicionar tarefa
@@ -188,7 +188,7 @@ function ProjetoDetalhePage() {
                 <span>Excluir também as tarefas vinculadas e seus anexos ({projectTasks.length})</span>
               </label>
               {deleteTasks ? (
-                <p className="px-1 text-xs text-destructive">As tarefas selecionadas e seus anexos serão apagados permanentemente.</p>
+                <p className="px-1 text-xs agenda-danger-text">As tarefas selecionadas e seus anexos serão apagados permanentemente.</p>
               ) : (
                 <p className="px-1 text-xs text-muted-foreground">As tarefas vinculadas passarão a ser avulsas e manterão seus anexos.</p>
               )}
@@ -196,7 +196,7 @@ function ProjetoDetalhePage() {
           ) : null}
           <AlertDialogFooter>
             <AlertDialogCancel disabled={deleting}>Cancelar</AlertDialogCancel>
-            <AlertDialogAction disabled={deleting} className="bg-destructive text-destructive-foreground hover:bg-destructive"
+            <AlertDialogAction disabled={deleting} className="bg-destructive text-destructive-foreground hover:bg-destructive hover:brightness-90"
               onClick={(event) => { event.preventDefault(); removeProject(); }}>
               {deleting ? "Excluindo..." : "Excluir evento"}
             </AlertDialogAction>

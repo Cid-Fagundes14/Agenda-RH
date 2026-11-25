@@ -43,6 +43,67 @@
     --sidebar-ring: 215 48% 83%;
     --agenda-panel: #eff4fa;
     --agenda-panel-border: #d5e0ed;
+    --agenda-link: #2563eb;
+    --agenda-button-hover: #1d4ed8;
+    --agenda-danger: #b91c1c;
+    --agenda-danger-bg: #fef2f2;
+    --agenda-danger-border: #fecaca;
+    --agenda-overdue: #dc2626;
+    --agenda-stage-idle: #475569;
+    --agenda-stage-idle-bg: #f1f5f9;
+    --agenda-stage-active: #1d4ed8;
+    --agenda-stage-active-bg: #eff6ff;
+    --agenda-stage-done: #047857;
+    --agenda-stage-done-bg: #ecfdf5;
+  }
+
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 96%;
+    --card: 215 32% 17%;
+    --card-foreground: 210 40% 96%;
+    --popover: 215 30% 20%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 221 69% 47%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 215 28% 22%;
+    --secondary-foreground: 210 40% 96%;
+    --muted: 215 28% 22%;
+    --muted-foreground: 215 25% 72%;
+    --accent: 217 40% 26%;
+    --accent-foreground: 213 95% 86%;
+    --destructive: 351 62% 44%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 215 25% 27%;
+    --input: 215 20% 48%;
+    --ring: 213 94% 74%;
+    --chart-1: 213 94% 74%;
+    --chart-2: 160 65% 62%;
+    --chart-3: 35 95% 69%;
+    --chart-4: 0 85% 75%;
+    --chart-5: 215 25% 72%;
+    --sidebar-background: 215 47% 16%;
+    --sidebar-foreground: 214 38% 91%;
+    --sidebar-primary: 213 95% 86%;
+    --sidebar-primary-foreground: 222 47% 11%;
+    --sidebar-accent: var(--background);
+    --sidebar-accent-foreground: 213 95% 86%;
+    --sidebar-border: 215 30% 27%;
+    --sidebar-ring: var(--ring);
+    --agenda-panel: #1e293b;
+    --agenda-panel-border: #334359;
+    --agenda-link: #93c5fd;
+    --agenda-button-hover: #2452ba;
+    --agenda-danger: #fda4af;
+    --agenda-danger-bg: #3b2533;
+    --agenda-danger-border: #744153;
+    --agenda-overdue: #fda4af;
+    --agenda-stage-idle: #cbd5e1;
+    --agenda-stage-idle-bg: #334155;
+    --agenda-stage-active: #bfdbfe;
+    --agenda-stage-active-bg: #233c60;
+    --agenda-stage-done: #a7f3d0;
+    --agenda-stage-done-bg: #1a403d;
   }
 }
 
@@ -69,18 +130,83 @@
     box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
   }
 
+  .dark .card-surface {
+    box-shadow: none;
+  }
+
   .agenda-panel {
     background-color: var(--agenda-panel);
     border-color: var(--agenda-panel-border);
   }
 
   .agenda-nav-link {
-    @apply text-sidebar-foreground transition-colors hover:bg-black/10;
+    @apply text-sidebar-foreground transition-colors hover:bg-black/10 dark:hover:bg-white/10;
     @apply focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-sidebar-ring;
   }
 
   .agenda-nav-link[aria-current="page"] {
-    @apply bg-sidebar-accent text-sidebar-accent-foreground focus-visible:outline-sidebar-accent-foreground;
+    @apply bg-sidebar-accent text-sidebar-accent-foreground focus-visible:outline-sidebar-accent-foreground dark:shadow-[inset_3px_0_0_#93c5fd] max-lg:dark:shadow-[inset_0_3px_0_#93c5fd];
+  }
+
+  .agenda-link {
+    color: var(--agenda-link);
+  }
+
+  .agenda-task-checked {
+    @apply border-emerald-700 bg-emerald-700 text-white;
+  }
+
+  .agenda-danger-text {
+    color: var(--agenda-danger);
+  }
+
+  .agenda-danger-surface {
+    color: var(--agenda-danger);
+    background-color: var(--agenda-danger-bg);
+    border-color: var(--agenda-danger-border);
+  }
+
+  .agenda-overdue {
+    color: var(--agenda-overdue);
+  }
+
+  .card-surface.agenda-overdue-item {
+    border-inline-start: 4px solid var(--agenda-overdue);
+  }
+
+  .agenda-stage {
+    color: var(--agenda-stage-text);
+  }
+
+  .agenda-stage-badge {
+    color: var(--agenda-stage-text);
+    background-color: var(--agenda-stage-bg);
+  }
+
+  [data-stage="para_iniciar"] {
+    --agenda-stage-text: var(--agenda-stage-idle);
+    --agenda-stage-bg: var(--agenda-stage-idle-bg);
+  }
+
+  [data-stage="em_andamento"] {
+    --agenda-stage-text: var(--agenda-stage-active);
+    --agenda-stage-bg: var(--agenda-stage-active-bg);
+  }
+
+  [data-stage="finalizado"] {
+    --agenda-stage-text: var(--agenda-stage-done);
+    --agenda-stage-bg: var(--agenda-stage-done-bg);
+  }
+
+  .agenda-calendar-event {
+    color: #fff;
+    background-color: color-mix(in srgb, var(--event-color) 74%, #000);
+  }
+
+  .dark .agenda-calendar-event {
+    color: hsl(var(--foreground));
+    background-color: color-mix(in srgb, var(--event-color) 25%, hsl(var(--card)));
+    border-inline-start: 2px solid color-mix(in srgb, var(--event-color) 68%, #fff);
   }
 
   .meta-label {

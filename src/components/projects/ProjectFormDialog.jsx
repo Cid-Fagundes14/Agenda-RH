@@ -106,7 +106,7 @@ export default function ProjectFormDialog({ open, onOpenChange, project = null, 
         type="button"
         onClick={submit}
         disabled={saving}
-        className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:bg-[#1D4ED8] disabled:opacity-60"
+        className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:bg-[var(--agenda-button-hover)] disabled:opacity-60"
       >
         {saving ? "Salvando..." : project ? "Salvar projeto" : "Criar projeto"}
       </button>
@@ -129,7 +129,7 @@ export default function ProjectFormDialog({ open, onOpenChange, project = null, 
       ) : null}
       {open ? <AttachmentFields kind="project" parentId={parentId} drafts={fileDrafts} setDrafts={setFileDrafts} disabled={saving} open={open} /> : null}
       {error ? (
-        <p className="mt-4 rounded-md border border-[#FECACA] bg-[#FEF2F2] px-3 py-2 text-xs font-medium text-[#B91C1C]">
+        <p className="mt-4 rounded-md border agenda-danger-surface px-3 py-2 text-xs font-medium">
           {error}
         </p>
       ) : null}

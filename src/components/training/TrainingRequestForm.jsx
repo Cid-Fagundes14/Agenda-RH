@@ -177,7 +177,7 @@ export default function TrainingRequestForm({ request, titles, departments, onDi
           <Label htmlFor="training-notes">Observações</Label>
           <Textarea id="training-notes" value={values.notes ?? ""} onChange={(event) => update("notes", event.target.value)} maxLength={4000} />
         </div>
-        {error ? <p role="alert" className="text-sm text-red-800">{error}</p> : null}
+        {error ? <p role="alert" className="agenda-danger-text text-sm">{error}</p> : null}
       </form>
     </ResponsiveDialog>
   );

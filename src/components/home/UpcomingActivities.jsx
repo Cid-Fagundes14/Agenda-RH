@@ -10,10 +10,10 @@ function daysUntil(today, date) {
 }
 
 function proximityStyle(days) {
-  if (days < 3) return "border-red-200 bg-red-50 text-red-800";
-  if (days < 7) return "border-orange-200 bg-orange-50 text-orange-800";
-  if (days <= 10) return "border-emerald-200 bg-emerald-50 text-emerald-800";
-  return "border-blue-200 bg-blue-50 text-blue-800";
+  if (days < 3) return "border-red-200 bg-red-50 text-red-800 dark:border-red-400/30 dark:bg-red-950/55 dark:text-red-200";
+  if (days < 7) return "border-orange-200 bg-orange-50 text-orange-800 dark:border-orange-400/30 dark:bg-orange-950/55 dark:text-orange-200";
+  if (days <= 10) return "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-400/30 dark:bg-emerald-950/55 dark:text-emerald-200";
+  return "border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-400/30 dark:bg-blue-950/55 dark:text-blue-200";
 }
 
 export default function UpcomingActivities({ tasks, projects, today, onOpenTask }) {

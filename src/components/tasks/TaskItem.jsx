@@ -12,8 +12,8 @@ export default function TaskItem({ task, project, overdue = false, onToggle, onO
   return (
     <div
       className={cn(
-        "card-surface agenda-panel flex items-start gap-2 p-3 transition hover:border-slate-400",
-        overdue && "border-l-4 border-l-[#DC2626]",
+        "card-surface agenda-panel flex items-start gap-2 p-3 transition hover:border-slate-400 dark:hover:border-input",
+        overdue && "agenda-overdue-item",
         done && "opacity-80"
       )}
     >
@@ -26,7 +26,7 @@ export default function TaskItem({ task, project, overdue = false, onToggle, onO
         <span
           className={cn(
             "flex h-5 w-5 items-center justify-center rounded-[5px] border",
-            done ? "border-[#059669] bg-[#059669] text-white" : "border-slate-300 bg-white"
+            done ? "agenda-task-checked" : "border-slate-300 bg-card dark:border-input"
           )}
         >
           {done ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : null}
@@ -40,7 +40,7 @@ export default function TaskItem({ task, project, overdue = false, onToggle, onO
       >
         <div className="flex items-center gap-2">
           {time ? (
-            <time className="shrink-0 rounded-md bg-white px-2 py-0.5 text-xs font-semibold tabular-nums text-sidebar-primary">
+            <time className="shrink-0 rounded-md bg-card px-2 py-0.5 text-xs font-semibold tabular-nums text-sidebar-primary">
               {time}
             </time>
           ) : null}
@@ -58,11 +58,11 @@ export default function TaskItem({ task, project, overdue = false, onToggle, onO
             <span className="h-2 w-2 rounded-full" style={{ backgroundColor: priority.color }} />
             {priority.label}
           </span>
-          <span className="text-slate-300">·</span>
-          <span className={cn(overdue && "font-semibold text-[#DC2626]")}>{taskDateLabel(task)}</span>
+          <span className="text-slate-300 dark:text-muted-foreground">·</span>
+          <span className={cn(overdue && "font-semibold agenda-overdue")}>{taskDateLabel(task)}</span>
           {project ? (
             <>
-              <span className="text-slate-300">·</span>
+              <span className="text-slate-300 dark:text-muted-foreground">·</span>
               <span className="inline-flex items-center gap-1.5">
                 <span className="h-2 w-2 rounded-full" style={{ backgroundColor: project.color }} />
                 <span className="max-w-[180px] truncate">{project.name}</span>
@@ -70,13 +70,13 @@ export default function TaskItem({ task, project, overdue = false, onToggle, onO
             </>
           ) : (
             <>
-              <span className="text-slate-300">·</span>
+              <span className="text-slate-300 dark:text-muted-foreground">·</span>
               <span>Avulsa</span>
             </>
           )}
           <span
-            className="rounded-full px-2 py-0.5 text-[11px] font-medium"
-            style={{ backgroundColor: stage.bg, color: stage.color }}
+            className="agenda-stage-badge rounded-full px-2 py-0.5 text-[11px] font-medium"
+            data-stage={stage.value}
           >
             {stage.label}
           </span>
