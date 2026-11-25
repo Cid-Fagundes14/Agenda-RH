@@ -27,7 +27,7 @@ Agenda de tarefas, treinamentos e eventos, com as telas Hoje, Tarefas, Projetos 
 
 No Supabase, abra **Authentication → URL Configuration**. Defina **Site URL** como o domínio da Vercel, sem barra no final. Em **Redirect URLs**, adicione a URL completa de recuperação, como `https://seu-app.vercel.app/reset-password`. Para desenvolvimento, use outro ambiente Supabase com seu próprio Site URL.
 
-Em **Authentication → Email Templates**, ajuste os templates abaixo. O token vai para a tela do app e é verificado quando a pessoa clica em **Continuar**.
+O convite funciona com o modelo padrão do Supabase. Deixe o **Site URL** apontando para a raiz da Agenda. Quando o Supabase retorna o convite para a Agenda, o app abre a tela de cadastro. Para usar os modelos personalizados abaixo, configure o SMTP próprio e edite o conteúdo em **Authentication → Email Templates**. O token é verificado quando a pessoa clica em **Continuar**.
 
 **Invite user**
 

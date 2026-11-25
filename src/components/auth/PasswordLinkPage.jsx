@@ -1,19 +1,23 @@
 import { KeyRound } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getSupabase, hasSupabaseConfig, resultOf } from "@/api/supabase";
-import { clearPasswordSetup, pendingPasswordSetup, readPasswordSetup, rememberPasswordSetup, stripAuthToken } from "@/lib/authLink";
+import { clearPasswordSetup, pendingPasswordSetup, readInvitationSession, readPasswordSetup, rememberPasswordSetup, stripAuthToken } from "@/lib/authLink";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthError, AuthField, AuthLink, SubmitButton } from "@/components/auth/parts";
 
 export function PasswordLinkPage({ flow }) {
   const invite = flow === "invite";
   const [token, setToken] = useState(() => typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("token_hash"));
+  const [invitationSession, setInvitationSession] = useState(() =>
+    invite && typeof window !== "undefined" ? readInvitationSession(window.location.hash) : null
+  );
+  const hasLink = Boolean(token || invitationSession);
   const [user, setUser] = useState(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (token || !hasSupabaseConfig || readPasswordSetup()?.flow !== flow) return;
+    if (hasLink || !hasSupabaseConfig || readPasswordSetup()?.flow !== flow) return;
     let active = true;
     resultOf(getSupabase().auth.getUser())
       .then(({ user: visitor }) => {
@@ -21,7 +25,7 @@ export function PasswordLinkPage({ flow }) {
       })
       .catch(() => {});
     return () => { active = false; };
-  }, [flow, token]);
+  }, [flow, hasLink]);
 
   async function submit(event) {
     event.preventDefault();
@@ -32,12 +36,15 @@ export function PasswordLinkPage({ flow }) {
     try {
       const auth = getSupabase().auth;
       if (!user) {
-        const { user: verifiedUser } = await resultOf(auth.verifyOtp({ token_hash: token, type: flow }));
+        const { user: verifiedUser } = token
+          ? await resultOf(auth.verifyOtp({ token_hash: token, type: flow }))
+          : await resultOf(auth.setSession(invitationSession));
         if (!verifiedUser) throw new Error("Não foi possível validar o link.");
         rememberPasswordSetup(verifiedUser.id, flow);
         stripAuthToken();
         setUser(verifiedUser);
         setToken(null);
+        setInvitationSession(null);
         return;
       }
 
@@ -54,9 +61,12 @@ export function PasswordLinkPage({ flow }) {
       if (!invite) await resultOf(auth.signOut({ scope: "local" }));
       window.location.replace(invite ? "/" : "/login");
     } catch (failure) {
-      if (failure.code === "otp_expired" || failure.code === "validation_failed") {
+      if (failure.code === "otp_expired" || failure.code === "validation_failed" ||
+          (invitationSession && ["bad_jwt", "session_not_found", "refresh_token_not_found",
+            "refresh_token_already_used", "no_authorization"].includes(failure.code))) {
         stripAuthToken();
         setToken(null);
+        setInvitationSession(null);
         setError("O link é inválido ou expirou.");
       } else if (failure.code === "same_password" || failure.code === "weak_password") {
         setError("Use uma nova senha que atenda às exigências de segurança.");
@@ -71,7 +81,7 @@ export function PasswordLinkPage({ flow }) {
   return (
     <AuthLayout icon={KeyRound} title={invite ? "Concluir cadastro" : "Definir nova senha"}>
       {!hasSupabaseConfig ? <AuthError>O Supabase ainda não foi configurado neste ambiente.</AuthError>
-        : user || token ? (
+        : user || hasLink ? (
           <form onSubmit={submit} className="space-y-4">
             {user ? <>
               {invite && <>
