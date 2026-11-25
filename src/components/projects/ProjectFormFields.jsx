@@ -52,7 +52,7 @@ export default function ProjectFormFields({ value, onChange }) {
               className={cn(
                 "min-h-10 rounded-[5px] text-xs font-medium transition",
                 value.event_type === option.value
-                  ? "bg-white text-foreground shadow-sm"
+                  ? "bg-card text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >

@@ -2,6 +2,7 @@ import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-r
 import { DefaultCatchBoundary } from "@/components/DefaultCatchBoundary";
 import { NotFound } from "@/components/NotFound";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/lib/AuthContext";
 import appCss from "@/index.css?url";
 
@@ -41,12 +42,14 @@ function RootComponent() {
 
 function RootDocument({ children }) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
       <body>
-        {children}
+        <ThemeProvider attribute="class" defaultTheme="system" storageKey="agenda-rh-theme">
+          {children}
+        </ThemeProvider>
         <Scripts />
       </body>
     </html>

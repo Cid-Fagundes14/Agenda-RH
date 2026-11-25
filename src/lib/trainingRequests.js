@@ -6,10 +6,10 @@ export const TRAINING_STATUSES = [
 ];
 
 export const TRAINING_URGENCIES = [
-  { value: "critica", label: "Crítica", style: "bg-red-100 text-red-800" },
-  { value: "alta", label: "Alta", style: "bg-orange-100 text-orange-800" },
-  { value: "media", label: "Média", style: "bg-yellow-100 text-yellow-900" },
-  { value: "baixa", label: "Baixa", style: "bg-emerald-100 text-emerald-800" },
+  { value: "critica", label: "Crítica", style: "bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-200" },
+  { value: "alta", label: "Alta", style: "bg-orange-100 text-orange-800 dark:bg-orange-950/60 dark:text-orange-200" },
+  { value: "media", label: "Média", style: "bg-yellow-100 text-yellow-900 dark:bg-yellow-950/60 dark:text-yellow-200" },
+  { value: "baixa", label: "Baixa", style: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-200" },
 ];
 
 export const TRAINING_TYPES = [

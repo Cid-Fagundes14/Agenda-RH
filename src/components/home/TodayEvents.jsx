@@ -39,7 +39,7 @@ export default function TodayEvents({ projects }) {
                 key={project.id}
                 to="/projetos/$projectId"
                 params={{ projectId: project.id }}
-                className="card-surface agenda-panel block p-3 transition hover:border-slate-300"
+                className="card-surface agenda-panel block p-3 transition hover:border-slate-300 dark:hover:border-input"
                 style={{ borderLeft: `4px solid ${project.color}` }}
               >
                 <p className="text-sm font-semibold text-foreground">{project.name}</p>

@@ -104,7 +104,7 @@ function HojePage() {
             {overdue.length > 0 ? (
               <>
                 <div className="mb-2 flex items-center gap-2">
-                  <AlertTriangle className="h-4 w-4 text-[#DC2626]" />
+                  <AlertTriangle className="h-4 w-4 agenda-overdue" />
                   <h2 className="font-heading text-[1.25rem] font-semibold text-foreground">
                     Atrasadas
                     <span className="ml-2 text-sm font-medium text-muted-foreground">{overdue.length}</span>

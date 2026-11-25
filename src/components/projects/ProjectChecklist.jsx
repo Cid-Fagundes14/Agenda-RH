@@ -30,7 +30,7 @@ export default function ProjectChecklist({ tasks, today, onToggle, onEdit }) {
           <span
             className={cn(
               "flex h-5 w-5 items-center justify-center rounded-[5px] border",
-              isDone ? "border-[#059669] bg-[#059669] text-white" : "border-slate-300 bg-white"
+              isDone ? "agenda-task-checked" : "border-slate-300 bg-card dark:border-input"
             )}
           >
             {isDone ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : null}
@@ -42,10 +42,10 @@ export default function ProjectChecklist({ tasks, today, onToggle, onEdit }) {
             {task.title}
           </p>
           <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
-            <span className="rounded-full px-2 py-0.5 font-medium" style={{ backgroundColor: stage.bg, color: stage.color }}>
+            <span className="agenda-stage-badge rounded-full px-2 py-0.5 font-medium" data-stage={stage.value}>
               {stage.label}
             </span>
-            <span className={cn(overdue && "font-semibold text-[#DC2626]")}>{taskScheduleLabel(task)}</span>
+            <span className={cn(overdue && "font-semibold agenda-overdue")}>{taskScheduleLabel(task)}</span>
           </div>
         </div>
 
@@ -66,7 +66,7 @@ export default function ProjectChecklist({ tasks, today, onToggle, onEdit }) {
       <div>
         <p className="meta-label mb-1">Pendentes · {pending.length}</p>
         {pending.length > 0 ? (
-          <ul className="rounded-md border border-border bg-white">{pending.map(row)}</ul>
+          <ul className="rounded-md border border-border bg-card">{pending.map(row)}</ul>
         ) : (
           <p className="rounded-md border border-dashed border-border px-3 py-4 text-xs text-muted-foreground">
             Nenhuma tarefa pendente.
@@ -77,7 +77,7 @@ export default function ProjectChecklist({ tasks, today, onToggle, onEdit }) {
       <div>
         <p className="meta-label mb-1">Concluídas · {done.length}</p>
         {done.length > 0 ? (
-          <ul className="rounded-md border border-border bg-white">{done.map(row)}</ul>
+          <ul className="rounded-md border border-border bg-card">{done.map(row)}</ul>
         ) : (
           <p className="rounded-md border border-dashed border-border px-3 py-4 text-xs text-muted-foreground">
             Nenhuma tarefa concluída ainda.

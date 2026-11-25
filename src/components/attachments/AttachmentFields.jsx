@@ -42,9 +42,9 @@ export default function AttachmentFields({ kind, parentId, drafts, setDrafts, di
       <p id={`${inputId}-help`} className="text-xs text-muted-foreground">PDF, XLS ou XLSX. Até 10 MB por arquivo.</p>
       <input id={inputId} type="file" multiple accept=".pdf,.xls,.xlsx"
         disabled={disabled || removing} onChange={addFiles} aria-describedby={`${inputId}-help`}
-        className="block w-full min-w-0 text-sm file:mr-2 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-2 file:text-sm file:font-medium disabled:opacity-60" />
+        className="block w-full min-w-0 text-sm file:mr-2 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-2 file:text-secondary-foreground file:text-sm file:font-medium disabled:opacity-60" />
       {errors.length ? (
-        <ul role="alert" className="space-y-1 text-xs text-destructive">{errors.map((error, index) => <li key={index}>{error}</li>)}</ul>
+        <ul role="alert" className="space-y-1 text-xs agenda-danger-text">{errors.map((error, index) => <li key={index}>{error}</li>)}</ul>
       ) : null}
       {drafts.length ? (
         <ul className="divide-y rounded-md border">
@@ -52,7 +52,7 @@ export default function AttachmentFields({ kind, parentId, drafts, setDrafts, di
             <li key={id} className="flex items-center justify-between gap-2 p-2 text-sm">
               <span className="break-all">{file.name}</span>
               <button type="button" disabled={disabled || removing} onClick={() => discard(id)}
-                className="shrink-0 rounded-md px-2 py-1 text-xs text-destructive hover:bg-secondary">
+                className="shrink-0 rounded-md px-2 py-1 text-xs agenda-danger-text hover:bg-secondary">
                 Remover
               </button>
             </li>

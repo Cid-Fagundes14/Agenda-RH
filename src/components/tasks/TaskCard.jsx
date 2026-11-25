@@ -9,7 +9,7 @@ export default function TaskCard({ task, project, today, onOpen, onStageChange }
   const stage = STAGE_STYLES[task.stage] || STAGE_STYLES.para_iniciar;
 
   return (
-    <article className={cn("card-surface p-3", overdue && "border-l-4 border-l-[#DC2626]")}>
+    <article className={cn("card-surface p-3", overdue && "agenda-overdue-item")}>
       <button type="button" onClick={() => onOpen(task)} className="block w-full text-left">
         <p className={cn("text-sm font-medium text-foreground", task.stage === "finalizado" && "text-muted-foreground line-through")}>
           {task.title}
@@ -19,8 +19,8 @@ export default function TaskCard({ task, project, today, onOpen, onStageChange }
             <span className="h-2 w-2 rounded-full" style={{ backgroundColor: priority.color }} />
             {priority.label}
           </span>
-          <span className="text-slate-300">·</span>
-          <span className={cn(overdue && "font-semibold text-[#DC2626]")}>{taskScheduleLabel(task)}</span>
+          <span className="text-slate-300 dark:text-muted-foreground">·</span>
+          <span className={cn(overdue && "font-semibold agenda-overdue")}>{taskScheduleLabel(task)}</span>
         </div>
         <div className="mt-1.5 flex items-center gap-1.5 text-xs text-muted-foreground">
           {project ? (

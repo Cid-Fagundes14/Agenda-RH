@@ -102,7 +102,7 @@ function TarefasPage() {
       aria-pressed={active}
       className={cn(
         "min-h-11 rounded-md border px-3 text-xs font-medium transition",
-        active ? "border-primary bg-accent text-accent-foreground" : "border-border bg-white text-muted-foreground hover:text-foreground"
+        active ? "border-primary bg-accent text-accent-foreground" : "border-border bg-card text-muted-foreground hover:text-foreground"
       )}
     >
       {children}
@@ -124,7 +124,7 @@ function TarefasPage() {
             setEditingTask(null);
             setFormOpen(true);
           }}
-          className="inline-flex min-h-11 items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-[#1D4ED8]"
+          className="inline-flex min-h-11 items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-[var(--agenda-button-hover)]"
         >
           <Plus className="h-4 w-4" strokeWidth={2.5} />
           <span className="hidden sm:inline">Nova tarefa</span>
@@ -204,7 +204,7 @@ function TarefasPage() {
                 type="button"
                 onClick={() => exportResults(value)}
                 disabled={loading || !!error || !filtered.length || !!exporting}
-                className="inline-flex min-h-11 items-center gap-1.5 rounded-md border bg-white px-3 text-xs font-semibold hover:bg-secondary disabled:opacity-50"
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-md border bg-card px-3 text-xs font-semibold hover:bg-secondary disabled:opacity-50"
               >
                 <Download className="h-4 w-4" aria-hidden="true" />
                 {exporting === value ? "Exportando..." : label}
@@ -243,7 +243,7 @@ function TarefasPage() {
                   aria-pressed={stageTab === column.value}
                   className={cn(
                     "min-h-11 rounded-[5px] text-xs font-medium transition",
-                    stageTab === column.value ? "bg-white text-sidebar-primary shadow-sm" : "text-muted-foreground"
+                    stageTab === column.value ? "bg-card text-sidebar-primary shadow-sm" : "text-muted-foreground"
                   )}
                 >
                   <span className="inline-flex items-center gap-1.5">

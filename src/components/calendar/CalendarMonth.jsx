@@ -32,10 +32,11 @@ export default function CalendarMonth({ year, month, selected, onSelect, tasks, 
               key={iso}
               type="button"
               onClick={() => onSelect(iso)}
+              aria-pressed={isSelected}
               className={cn(
-                "flex min-h-[62px] flex-col gap-1 border-b border-r border-border p-1.5 text-left transition last:border-r-0 hover:bg-secondary sm:min-h-[96px]",
-                !inMonth && "bg-slate-50/70",
-                isSelected && "bg-accent"
+                "flex min-h-[62px] min-w-0 flex-col gap-1 border-b border-r border-border p-1.5 text-left transition last:border-r-0 focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring sm:min-h-[96px]",
+                isSelected ? "bg-accent ring-1 ring-inset ring-primary dark:ring-ring" : "hover:bg-secondary",
+                !isSelected && !inMonth && "bg-slate-50/70 dark:bg-background"
               )}
             >
               <span
@@ -49,12 +50,12 @@ export default function CalendarMonth({ year, month, selected, onSelect, tasks, 
                 {Number(iso.slice(8, 10))}
               </span>
 
-              <div className="hidden min-w-0 space-y-1 sm:block">
+              <div className="hidden w-full min-w-0 space-y-1 sm:block">
                 {dayProjects.slice(0, 2).map((project) => (
                   <span
                     key={project.id}
-                    className="block truncate rounded px-1 py-0.5 text-[10px] font-medium text-white"
-                    style={{ backgroundColor: project.color }}
+                    className="agenda-calendar-event block truncate rounded px-1 py-0.5 text-[10px] font-medium"
+                    style={{ "--event-color": project.color }}
                   >
                     {project.name}
                   </span>
@@ -77,7 +78,7 @@ export default function CalendarMonth({ year, month, selected, onSelect, tasks, 
                     key={task.id}
                     className={cn(
                       "h-1.5 w-1.5 rounded-full",
-                      task.stage === "finalizado" ? "bg-[#059669]" : "bg-slate-400"
+                      task.stage === "finalizado" ? "bg-emerald-600 dark:bg-emerald-400" : "bg-slate-400"
                     )}
                   />
                 ))}
