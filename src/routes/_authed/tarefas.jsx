@@ -1,13 +1,15 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Loader2, Plus, Search } from "lucide-react";
+import { Download, Loader2, Plus, Search } from "lucide-react";
+import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import TaskCard from "@/components/tasks/TaskCard";
 import TaskFormDialog from "@/components/tasks/TaskFormDialog";
 import TaskDetailsDialog from "@/components/tasks/TaskDetailsDialog";
 import { useAgendaData } from "@/hooks/useAgendaData";
-import { PRIORITIES, STAGES } from "@/lib/taskConstants";
+import { PRIORITIES, PRIORITY_STYLES, STAGES, STAGE_STYLES } from "@/lib/taskConstants";
+import { exportTasksExcel, exportTasksPdf } from "@/lib/taskExport";
 import { taskIsOverdue, todayISO } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +19,7 @@ export const Route = createFileRoute("/_authed/tarefas")({
 });
 
 const ALL = "__all__";
+const STANDALONE = "__none__";
 
 function TarefasPage() {
   const today = todayISO();
@@ -24,6 +27,8 @@ function TarefasPage() {
   const [search, setSearch] = useState("");
   const [priority, setPriority] = useState(ALL);
   const [projectFilter, setProjectFilter] = useState(ALL);
+  const [stageFilter, setStageFilter] = useState(ALL);
+  const [exporting, setExporting] = useState("");
   const [onlyOverdue, setOnlyOverdue] = useState(false);
   const [onlyNoDate, setOnlyNoDate] = useState(false);
   const [stageTab, setStageTab] = useState("para_iniciar");
@@ -41,19 +46,46 @@ function TarefasPage() {
     return tasks.filter((task) => {
       if (term && !`${task.title} ${task.requester || ""}`.toLowerCase().includes(term)) return false;
       if (priority !== ALL && task.priority !== priority) return false;
+      if (stageFilter !== ALL && task.stage !== stageFilter) return false;
       if (projectFilter !== ALL) {
-        if (projectFilter === "__none__" ? !!task.project_id : task.project_id !== projectFilter) return false;
+        if (projectFilter === STANDALONE ? !!task.project_id : task.project_id !== projectFilter) return false;
       }
       if (onlyOverdue && !taskIsOverdue(task, today)) return false;
       if (onlyNoDate && task.schedule_type !== "none") return false;
       return true;
     });
-  }, [tasks, search, priority, projectFilter, onlyOverdue, onlyNoDate, today]);
+  }, [tasks, search, priority, projectFilter, stageFilter, onlyOverdue, onlyNoDate, today]);
 
   const columns = STAGES.map((stage) => ({
     ...stage,
     items: filtered.filter((task) => task.stage === stage.value),
   }));
+
+  const mobileStage = stageFilter === ALL ? stageTab : stageFilter;
+
+  const exportResults = async (format) => {
+    setExporting(format);
+    try {
+      if (format === "pdf") {
+        const projectName = projectFilter === STANDALONE ? "Avulsa" : projectById[projectFilter]?.name;
+        const filters = [
+          search.trim() && `Busca: ${search.trim()}`,
+          priority !== ALL && `Prioridade: ${PRIORITY_STYLES[priority].label}`,
+          projectName && `Projeto: ${projectName}`,
+          stageFilter !== ALL && `Etapa: ${STAGE_STYLES[stageFilter].label}`,
+          onlyOverdue && "Somente atrasadas",
+          onlyNoDate && "Somente sem data",
+        ].filter(Boolean);
+        await exportTasksPdf(columns, projectById, today, filters);
+      } else {
+        await exportTasksExcel(columns, projectById, today);
+      }
+    } catch {
+      toast.error("Não foi possível exportar as tarefas. Tente novamente.");
+    } finally {
+      setExporting("");
+    }
+  };
 
   const selectedTask = tasks.find((task) => task.id === selectedId) || null;
 
@@ -106,13 +138,14 @@ function TarefasPage() {
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Buscar por título ou solicitante"
+            maxLength={250}
             className="min-h-11 pl-9"
           />
         </div>
 
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           <Select value={priority} onValueChange={setPriority}>
-            <SelectTrigger className="min-h-11">
+            <SelectTrigger aria-label="Filtrar por prioridade" className="min-h-11">
               <SelectValue placeholder="Prioridade" />
             </SelectTrigger>
             <SelectContent>
@@ -126,12 +159,12 @@ function TarefasPage() {
           </Select>
 
           <Select value={projectFilter} onValueChange={setProjectFilter}>
-            <SelectTrigger className="min-h-11">
+            <SelectTrigger aria-label="Filtrar por projeto" className="min-h-11">
               <SelectValue placeholder="Projeto" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value={ALL}>Todos os projetos</SelectItem>
-              <SelectItem value="__none__">Somente avulsas</SelectItem>
+              <SelectItem value={STANDALONE}>Somente avulsas</SelectItem>
               {projects.map((project) => (
                 <SelectItem key={project.id} value={project.id}>
                   {project.name}
@@ -140,9 +173,43 @@ function TarefasPage() {
             </SelectContent>
           </Select>
 
+          <Select value={stageFilter} onValueChange={setStageFilter}>
+            <SelectTrigger aria-label="Filtrar por etapa" className="min-h-11">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={ALL}>Todas as etapas</SelectItem>
+              {STAGES.map(({ value, label }) => <SelectItem key={value} value={value}>{label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+
           <div className="flex gap-2">
             {filterChip(onlyOverdue, () => setOnlyOverdue((v) => !v), "Atrasadas")}
             {filterChip(onlyNoDate, () => setOnlyNoDate((v) => !v), "Sem data")}
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-2 border-t pt-3">
+          <p aria-live="polite" className="text-xs text-muted-foreground">
+            {loading || error ? "Exportação de tarefas" :
+              `${filtered.length} ${filtered.length === 1 ? "tarefa será exportada" : "tarefas serão exportadas"}`}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { value: "pdf", label: "Exportar PDF" },
+              { value: "xlsx", label: "Exportar Excel" },
+            ].map(({ value, label }) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => exportResults(value)}
+                disabled={loading || !!error || !filtered.length || !!exporting}
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-md border bg-white px-3 text-xs font-semibold hover:bg-secondary disabled:opacity-50"
+              >
+                <Download className="h-4 w-4" aria-hidden="true" />
+                {exporting === value ? "Exportando..." : label}
+              </button>
+            ))}
           </div>
         </div>
       </div>
@@ -166,29 +233,31 @@ function TarefasPage() {
       ) : (
         <>
           {/* Celular: etapas em abas */}
-          <div className="mb-4 grid grid-cols-3 gap-1 agenda-panel rounded-md border p-1 lg:hidden">
-            {columns.map((column) => (
-              <button
-                key={column.value}
-                type="button"
-                onClick={() => setStageTab(column.value)}
-                aria-pressed={stageTab === column.value}
-                className={cn(
-                  "min-h-11 rounded-[5px] text-xs font-medium transition",
-                  stageTab === column.value ? "bg-white text-sidebar-primary shadow-sm" : "text-muted-foreground"
-                )}
-              >
-                <span className="inline-flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full" style={{ backgroundColor: column.color }} />
-                  {column.label}
-                </span>
-              </button>
-            ))}
-          </div>
+          {stageFilter === ALL ? (
+            <div className="mb-4 grid grid-cols-3 gap-1 agenda-panel rounded-md border p-1 lg:hidden">
+              {columns.map((column) => (
+                <button
+                  key={column.value}
+                  type="button"
+                  onClick={() => setStageTab(column.value)}
+                  aria-pressed={stageTab === column.value}
+                  className={cn(
+                    "min-h-11 rounded-[5px] text-xs font-medium transition",
+                    stageTab === column.value ? "bg-white text-sidebar-primary shadow-sm" : "text-muted-foreground"
+                  )}
+                >
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: column.color }} />
+                    {column.label}
+                  </span>
+                </button>
+              ))}
+            </div>
+          ) : null}
 
           <div className="agenda-panel space-y-2 rounded-lg border p-3 lg:hidden">
             {columns
-              .filter((column) => column.value === stageTab)
+              .filter((column) => column.value === mobileStage)
               .flatMap((column) => column.items)
               .map((task) => (
                 <TaskCard
@@ -200,7 +269,7 @@ function TarefasPage() {
                   onStageChange={setStage}
                 />
               ))}
-            {columns.find((column) => column.value === stageTab)?.items.length === 0 ? (
+            {columns.find((column) => column.value === mobileStage)?.items.length === 0 ? (
               <p className="card-surface p-5 text-center text-sm text-muted-foreground">
                 Nenhuma tarefa nesta etapa.
               </p>

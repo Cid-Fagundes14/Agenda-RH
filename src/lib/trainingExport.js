@@ -1,11 +1,11 @@
 import { formatBR, todayISO } from "@/lib/dates";
+import { addPdfPageNumbers, excelDateCell, saveReportWorkbook } from "@/lib/reportFiles";
 import { TRAINING_MODALITIES, TRAINING_STATUSES, TRAINING_TYPES, TRAINING_URGENCIES } from "@/lib/trainingRequests";
 
 const REPORT_TITLE = "Solicitações de Treinamento";
 const reportName = (extension) => `solicitacoes-treinamento-${todayISO()}.${extension}`;
 const labelFor = (options, value) => options.find((item) => item.value === value)?.label || "";
 const certificateLabel = (value) => value == null ? "" : value ? "Sim" : "Não";
-const dateCell = (date) => date ? { value: new Date(`${date}T00:00:00Z`), format: "dd/mm/yyyy" } : null;
 const numberCell = (number, format) => number == null || number === "" ? null : { value: Number(number), format };
 const moneyCell = (number) => numberCell(number, '"R$" #,##0.00');
 
@@ -19,10 +19,6 @@ const HEADERS = [
 const WIDTHS = [14, 28, 24, 24, 32, 24, 17, 24, 17, 20, 25, 26, 21, 20, 24, 22, 18, 21, 20, 48];
 
 export async function exportTrainingExcel(requests) {
-  const { default: writeExcelFile } = await import("write-excel-file/browser");
-  const header = HEADERS.map((value) => ({
-    value, fontWeight: "bold", backgroundColor: "#284876", textColor: "#FFFFFF", wrap: true,
-  }));
   const data = requests.map((request) => [
     request.registration,
     request.employee_name,
@@ -33,11 +29,11 @@ export async function exportTrainingExcel(requests) {
     labelFor(TRAINING_MODALITIES, request.modality),
     request.location,
     numberCell(request.duration_hours, "0.##"),
-    dateCell(request.requested_date),
+    excelDateCell(request.requested_date),
     labelFor(TRAINING_STATUSES, request.status),
-    dateCell(request.expected_completion_date),
-    dateCell(request.training_date),
-    dateCell(request.completion_date),
+    excelDateCell(request.expected_completion_date),
+    excelDateCell(request.training_date),
+    excelDateCell(request.completion_date),
     request.facilitator,
     moneyCell(request.estimated_cost),
     moneyCell(request.actual_cost),
@@ -46,11 +42,13 @@ export async function exportTrainingExcel(requests) {
     request.notes ? { value: request.notes, wrap: true } : null,
   ]);
 
-  await writeExcelFile([header, ...data], {
+  await saveReportWorkbook({
+    fileName: reportName("xlsx"),
     sheet: "Solicitações",
-    columns: WIDTHS.map((width) => ({ width })),
-    stickyRowsCount: 1,
-  }).toFile(reportName("xlsx"));
+    headers: HEADERS,
+    widths: WIDTHS,
+    rows: data,
+  });
 }
 
 export async function exportTrainingPdf(requests, reportFilters) {
@@ -82,12 +80,6 @@ export async function exportTrainingPdf(requests, reportFilters) {
     theme: "striped",
     rowPageBreak: "avoid",
   });
-  const pages = doc.getNumberOfPages();
-  for (let page = 1; page <= pages; page += 1) {
-    doc.setPage(page);
-    doc.setFontSize(8);
-    doc.setTextColor(71, 85, 105);
-    doc.text(`Página ${page} de ${pages}`, 285, 202, { align: "right" });
-  }
+  addPdfPageNumbers(doc);
   doc.save(reportName("pdf"));
 }
