@@ -45,6 +45,19 @@ O convite funciona com o modelo padrão do Supabase. Deixe o **Site URL** aponta
 
 Em **Authentication → Users → Add user → Send invitation**, envie um convite. A pessoa confirma o próprio e-mail pelo link e cadastra nome completo e senha. Teste convite, saída, login, recuperação e troca de senha com dados fictícios antes de começar a usar o app no trabalho.
 
+## Configurar os anexos
+
+No Supabase, abra **SQL Editor → New query** e execute o arquivo
+`supabase/migrations/202611250001_attachments.sql` uma vez, depois das migrações
+anteriores. Em **Storage → Buckets**, confira se `agenda-anexos` está privado,
+com limite de 10 MB por arquivo e tipos PDF, XLS e XLSX. Mantenha o limite
+global do Storage em pelo menos 10 MB para aplicar o limite do app.
+
+Publique a versão da Agenda que contém a seção **Anexos**. Teste com um
+documento fictício e, se possível, duas contas diferentes. A exclusão do evento
+pode manter as tarefas e seus anexos ou apagar todo o conjunto, conforme a
+opção marcada na confirmação.
+
 ## Executar no computador
 
 Use Node.js 24. Copie `.env.example` para `.env.local`, preencha as duas variáveis e rode:
