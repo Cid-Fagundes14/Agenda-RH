@@ -28,3 +28,11 @@ export function stripAuthToken() {
   url.searchParams.delete("token_hash");
   window.history.replaceState(window.history.state, "", url.pathname + url.search);
 }
+
+export function readInvitationSession(hash) {
+  const params = new URLSearchParams(hash.replace(/^#/, ""));
+  if (params.get("type") !== "invite") return null;
+  const accessToken = params.get("access_token");
+  const refreshToken = params.get("refresh_token");
+  return accessToken && refreshToken ? { access_token: accessToken, refresh_token: refreshToken } : null;
+}
