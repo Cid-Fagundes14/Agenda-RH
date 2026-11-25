@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import AttachmentList from "@/components/attachments/AttachmentList";
+import { useAttachments } from "@/hooks/useAttachments";
 import { deleteTask } from "@/api/agenda";
 import ResponsiveDialog from "@/components/ui-shared/ResponsiveDialog";
 import { PRIORITY_STYLES, STAGE_STYLES } from "@/lib/taskConstants";
@@ -19,6 +21,8 @@ export default function TaskDetailsDialog({ open, onOpenChange, task, project, o
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
+  const attachments = useAttachments("task", task?.id, open);
+
   if (!task) return null;
 
   const priority = PRIORITY_STYLES[task.priority] || PRIORITY_STYLES.media;
@@ -34,7 +38,8 @@ export default function TaskDetailsDialog({ open, onOpenChange, task, project, o
       onOpenChange(false);
       onDeleted?.(task);
     } catch (err) {
-      toast.error("Não foi possível excluir a tarefa.");
+      toast.error("Não foi possível concluir a exclusão. Confira os anexos restantes e tente novamente.");
+      await attachments.refetch();
     } finally {
       setDeleting(false);
     }
@@ -59,6 +64,7 @@ export default function TaskDetailsDialog({ open, onOpenChange, task, project, o
       <button
         type="button"
         onClick={() => setConfirmOpen(true)}
+        disabled={!attachments.data || attachments.isError || deleting}
         className="ml-auto min-h-11 rounded-md px-3 text-sm font-medium text-[#B91C1C] transition hover:bg-[#FEF2F2]"
       >
         Excluir
@@ -107,18 +113,24 @@ export default function TaskDetailsDialog({ open, onOpenChange, task, project, o
             </dd>
           </div>
         </dl>
+        <section className="mt-5 space-y-2 border-t pt-4">
+          <h4 className="text-sm font-semibold">Anexos</h4>
+          <AttachmentList query={attachments} disabled={deleting} />
+        </section>
       </ResponsiveDialog>
 
-      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+      <AlertDialog open={confirmOpen} onOpenChange={(value) => { if (!deleting) setConfirmOpen(value); }}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir esta tarefa?</AlertDialogTitle>
             <AlertDialogDescription>
-              “{task.title}” será removida de todas as telas e do checklist do projeto. Essa ação não pode ser desfeita.
+              “{task.title}” será removida de todas as telas e do checklist do projeto.
+              {attachments.data?.length ? ` Anexos a excluir permanentemente: ${attachments.data.length}.` : ""}
+              {" "}Essa ação não pode ser desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="min-h-11">Cancelar</AlertDialogCancel>
+            <AlertDialogCancel className="min-h-11" disabled={deleting}>Cancelar</AlertDialogCancel>
             <AlertDialogAction
               onClick={(event) => {
                 event.preventDefault();
