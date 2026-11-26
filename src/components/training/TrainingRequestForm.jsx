@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { toast } from "sonner";
+import AttachmentFields from "@/components/attachments/AttachmentFields";
+import { useAttachmentDrafts } from "@/hooks/useAttachments";
 import ResponsiveDialog from "@/components/ui-shared/ResponsiveDialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,6 +25,9 @@ export default function TrainingRequestForm({ request, titles, departments, onDi
   const [closed, setClosed] = useState(request?.status === "finalizado");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const { drafts, setDrafts, upload } = useAttachmentDrafts("certificate");
+  const busy = saving || uploading;
   const update = (name, value) => setValues((previous) => ({ ...previous, [name]: value }));
   const certificateIssued = values.certificate_issued === "sim";
 
@@ -54,8 +60,23 @@ export default function TrainingRequestForm({ request, titles, departments, onDi
     </div>
   );
 
+  async function sendCertificate() {
+    if (busy || !request?.id || !drafts.length) return;
+    setUploading(true);
+    try {
+      const failures = await upload(request.id);
+      if (failures.length) throw new Error("Certificate upload failed");
+      toast.success("Certificado anexado.");
+    } catch {
+      toast.error("Não foi possível enviar o certificado. Tente novamente.");
+    } finally {
+      setUploading(false);
+    }
+  }
+
   const submit = async (event) => {
     event.preventDefault();
+    if (busy) return;
     const employee = (values.employee_name || "").trim();
     const title = (values.training_title || "").trim().replace(/\s+/g, " ");
     if (!employee || !title) {
@@ -98,10 +119,10 @@ export default function TrainingRequestForm({ request, titles, departments, onDi
 
   const footer = (
     <div className="flex justify-end gap-2">
-      <button type="button" disabled={saving} onClick={onDismiss} className="min-h-11 rounded-md border px-4 text-sm font-medium">
+      <button type="button" disabled={busy} onClick={onDismiss} className="min-h-11 rounded-md border px-4 text-sm font-medium">
         Cancelar
       </button>
-      <button type="submit" form={FORM_ID} disabled={saving} className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:opacity-60">
+      <button type="submit" form={FORM_ID} disabled={busy} className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:opacity-60">
         {saving ? "Salvando..." : "Salvar solicitação"}
       </button>
     </div>
@@ -110,7 +131,7 @@ export default function TrainingRequestForm({ request, titles, departments, onDi
   return (
     <ResponsiveDialog
       open
-      onOpenChange={(open) => { if (!open && !saving) onDismiss(); }}
+      onOpenChange={(open) => { if (!open && !busy) onDismiss(); }}
       title={request ? "Editar solicitação" : "Nova solicitação"}
       description="Informe o colaborador e o treinamento. Você pode completar o restante depois."
       footer={footer}
@@ -146,7 +167,7 @@ export default function TrainingRequestForm({ request, titles, departments, onDi
           {input("facilitator", "Facilitador", { maxLength: 160 })}
           {input("duration_hours", "Carga horária (h)", { type: "number", min: "0.01", max: "9999999.99", step: "0.01" })}
           {input("expected_completion_date", "Data prevista de conclusão", { type: "date" })}
-          {input("training_date", "Data do treinamento", { type: "date" })}
+          {input("training_date", request?.convocations?.length ? "Data do treinamento no planejamento" : "Data do treinamento", { type: "date" })}
           {input("estimated_cost", "Custo estimado (R$)", { type: "number", min: "0", max: "9999999999.99", step: "0.01" })}
           {input("actual_cost", "Custo real (R$)", { type: "number", min: "0", max: "9999999999.99", step: "0.01" })}
         </fieldset>
@@ -173,6 +194,17 @@ export default function TrainingRequestForm({ request, titles, departments, onDi
           {closed ? input("completion_date", "Data de finalização", { type: "date", required: true }) : null}
         </fieldset>
 
+        {request ? (
+          <div>
+            <AttachmentFields kind="certificate" parentId={request.id} drafts={drafts} setDrafts={setDrafts} disabled={busy} open />
+            {drafts.length ? (
+              <button type="button" onClick={sendCertificate} disabled={busy}
+                className="mt-2 min-h-11 rounded-md border bg-card px-3 text-sm font-medium hover:bg-secondary disabled:opacity-60">
+                {uploading ? "Enviando..." : "Anexar certificado"}
+              </button>
+            ) : null}
+          </div>
+        ) : null}
         <div className="space-y-1.5">
           <Label htmlFor="training-notes">Observações</Label>
           <Textarea id="training-notes" value={values.notes ?? ""} onChange={(event) => update("notes", event.target.value)} maxLength={4000} />

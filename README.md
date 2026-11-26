@@ -7,7 +7,7 @@ Agenda de tarefas, treinamentos e eventos, com as telas Hoje, Tarefas, Projetos 
 ### 1. Criar o banco e habilitar os convites
 
 1. Crie um projeto no painel do Supabase.
-2. Abra **SQL Editor → New query**, cole o conteúdo de `supabase/migrations/202611230001_agenda.sql` e clique em **Run** uma vez no banco novo.
+2. Abra **SQL Editor → New query**, aplique os arquivos de `supabase/migrations/` em ordem de nome, uma vez cada no banco novo. Em um banco existente, aplique apenas as migrações pendentes, na mesma ordem.
 3. Em **Authentication**, mantenha e-mail e senha habilitados e desative **Allow new users to sign up**. O administrador convida cada pessoa pelo painel. Configure o serviço SMTP para receber os convites e a recuperação em endereços externos à equipe do Supabase.
 4. Na opção **Connect** do projeto, copie a **Project URL** e a **Publishable key**. A chave administrativa, identificada como **Secret** ou **service_role**, fica no Supabase.
 
@@ -47,9 +47,8 @@ Em **Authentication → Users → Add user → Send invitation**, envie um convi
 
 ## Configurar os anexos
 
-No Supabase, abra **SQL Editor → New query** e execute o arquivo
-`supabase/migrations/202611250001_attachments.sql` uma vez, depois das migrações
-anteriores. Em **Storage → Buckets**, confira se `agenda-anexos` está privado,
+A migração `supabase/migrations/202611250001_attachments.sql` configura o Storage.
+Depois de aplicá-la, em **Storage → Buckets**, confira se `agenda-anexos` está privado,
 com limite de 10 MB por arquivo e tipos PDF, XLS e XLSX. Mantenha o limite
 global do Storage em pelo menos 10 MB para aplicar o limite do app.
 
@@ -57,6 +56,14 @@ Publique a versão da Agenda que contém a seção **Anexos**. Teste com um
 documento fictício e, se possível, duas contas diferentes. A exclusão do evento
 pode manter as tarefas e seus anexos ou apagar todo o conjunto, conforme a
 opção marcada na confirmação.
+
+## Convocações e certificados
+
+A migração `202611260001_training_convocations.sql` acrescenta o histórico de
+convocações às solicitações existentes e usa o bucket privado `agenda-anexos`
+para guardar um PDF de certificado de até 10 MB por solicitação. A data de
+treinamento cadastrada anteriormente é preservada. Na lista e nas exportações,
+a data prevista do treinamento na convocação mais recente tem prioridade quando já existe histórico.
 
 ## Executar no computador
 

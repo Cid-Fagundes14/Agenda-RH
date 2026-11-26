@@ -1,5 +1,6 @@
 import { formatBR, todayISO } from "@/lib/dates";
 import { addPdfPageNumbers, excelDateCell, saveReportWorkbook } from "@/lib/reportFiles";
+import { summarizeConvocations } from "@/lib/trainingConvocations";
 import { TRAINING_MODALITIES, TRAINING_STATUSES, TRAINING_TYPES, TRAINING_URGENCIES } from "@/lib/trainingRequests";
 
 const REPORT_TITLE = "Solicitações de Treinamento";
@@ -32,7 +33,7 @@ export async function exportTrainingExcel(requests) {
     excelDateCell(request.requested_date),
     labelFor(TRAINING_STATUSES, request.status),
     excelDateCell(request.expected_completion_date),
-    excelDateCell(request.training_date),
+    excelDateCell(summarizeConvocations(request).trainingDate),
     excelDateCell(request.completion_date),
     request.facilitator,
     moneyCell(request.estimated_cost),
@@ -72,7 +73,7 @@ export async function exportTrainingPdf(requests, reportFilters) {
     body: requests.map((request) => [
       request.employee_name, request.registration, request.department, request.training_title,
       labelFor(TRAINING_STATUSES, request.status), labelFor(TRAINING_URGENCIES, request.urgency),
-      formatBR(request.expected_completion_date), formatBR(request.training_date),
+      formatBR(request.expected_completion_date), formatBR(summarizeConvocations(request).trainingDate),
       certificateLabel(request.certificate_issued),
     ].map((value) => value || "—")),
     styles: { font: "helvetica", fontSize: 8, cellPadding: 2.2, overflow: "linebreak" },

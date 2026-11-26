@@ -10,10 +10,16 @@ const FILE_TYPES = {
 
 const records = () => getSupabase().from("agenda_attachments");
 const storage = () => getSupabase().storage.from(BUCKET);
-const parentColumn = (kind) => kind === "task" ? "task_id" : "project_id";
+const PARENT_COLUMNS = {
+  task: "task_id",
+  project: "project_id",
+  certificate: "training_request_id",
+};
+const parentColumn = (kind) => PARENT_COLUMNS[kind];
 const mimeType = (file) => FILE_TYPES[file.name.split(".").at(-1)?.toLowerCase()];
 
-export function attachmentFileError(file) {
+export function attachmentFileError(file, kind) {
+  if (kind === "certificate" && mimeType(file) !== "application/pdf") return "Selecione um certificado em PDF.";
   if (!/\.(pdf|xls|xlsx)$/i.test(file.name)) return "Selecione um arquivo PDF, XLS ou XLSX.";
   if (file.name.length > 255) return "Use um nome de arquivo com até 255 caracteres.";
   if (file.size === 0) return "O arquivo está vazio.";
@@ -35,7 +41,7 @@ export async function listAttachments(kind, parentId) {
 
 export async function uploadAttachment(kind, parentId, draft) {
   const { id, file } = draft;
-  const invalid = attachmentFileError(file);
+  const invalid = attachmentFileError(file, kind);
   if (invalid) throw new Error(invalid);
   const field = parentColumn(kind);
   await resultOf(records().upsert({
