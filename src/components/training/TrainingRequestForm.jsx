@@ -29,7 +29,8 @@ export default function TrainingRequestForm({ request, titles, departments, onDi
   const { drafts, setDrafts, upload } = useAttachmentDrafts("certificate");
   const busy = saving || uploading;
   const update = (name, value) => setValues((previous) => ({ ...previous, [name]: value }));
-  const certificateIssued = values.certificate_issued === "sim";
+  const certificateIssued = values.certificate_issued ? values.certificate_issued === "sim" : null;
+  const certificateReported = certificateIssued !== null;
 
   const input = (name, label, props = {}) => (
     <div className="min-w-0 space-y-1.5">
@@ -106,7 +107,7 @@ export default function TrainingRequestForm({ request, titles, departments, onDi
         facilitator: optional("facilitator"),
         estimated_cost: optional("estimated_cost"),
         actual_cost: optional("actual_cost"),
-        certificate_issued: values.certificate_issued ? certificateIssued : null,
+        certificate_issued: certificateIssued,
         urgency: optional("urgency"),
         notes: optional("notes"),
       });
@@ -179,7 +180,7 @@ export default function TrainingRequestForm({ request, titles, departments, onDi
             <input
               type="checkbox"
               checked={closed}
-              disabled={!certificateIssued}
+              disabled={!certificateReported}
               onChange={(event) => {
                 const closing = event.target.checked;
                 setClosed(closing);
@@ -190,7 +191,7 @@ export default function TrainingRequestForm({ request, titles, departments, onDi
             />
             Encerrar solicitação
           </label>
-          {!certificateIssued ? <p className="text-xs text-muted-foreground">Marque o certificado como emitido para liberar o encerramento.</p> : null}
+          {!certificateReported ? <p className="text-xs text-muted-foreground">Selecione Sim ou Não em Certificado emitido para encerrar a solicitação.</p> : null}
           {closed ? input("completion_date", "Data de finalização", { type: "date", required: true }) : null}
         </fieldset>
 
