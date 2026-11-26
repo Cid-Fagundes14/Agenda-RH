@@ -78,21 +78,18 @@ function TrainingRequestsPage() {
   const exportResults = async (format) => {
     setExporting(format);
     try {
-      if (format === "pdf") {
-        const filters = [
-          training && `Treinamento: ${training}`,
-          department && `Área: ${department}`,
-          status && `Status: ${TRAINING_STATUSES.find(({ value }) => value === status)?.label}`,
-          urgency && `Urgência: ${TRAINING_URGENCIES.find(({ value }) => value === urgency)?.label}`,
-          term && `Busca: ${search.trim()}`,
-          attempt && `Convocação: ${CONVOCATION_OPTIONS.find(({ value }) => value === attempt)?.label}`,
-          attendance && `Comparecimento: ${ATTENDANCE_OPTIONS.find(({ value }) => value === attendance)?.label}`,
-          onlyRecall && "A reconvocar",
-        ].filter(Boolean);
-        await exportTrainingPdf(visible, filters);
-      } else {
-        await exportTrainingExcel(visible);
-      }
+      const filters = [
+        training && `Treinamento: ${training}`,
+        department && `Área: ${department}`,
+        status && `Status: ${TRAINING_STATUSES.find(({ value }) => value === status)?.label}`,
+        urgency && `Urgência: ${TRAINING_URGENCIES.find(({ value }) => value === urgency)?.label}`,
+        term && `Busca: ${search.trim()}`,
+        attempt && `Convocação: ${CONVOCATION_OPTIONS.find(({ value }) => value === attempt)?.label}`,
+        attendance && `Comparecimento: ${ATTENDANCE_OPTIONS.find(({ value }) => value === attendance)?.label}`,
+        onlyRecall && "A reconvocar",
+      ].filter(Boolean);
+      if (format === "pdf") await exportTrainingPdf(visible, filters);
+      else await exportTrainingExcel(visible, filters);
     } catch {
       toast.error("Não foi possível exportar as solicitações. Tente novamente.");
     } finally {
