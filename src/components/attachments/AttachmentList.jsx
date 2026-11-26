@@ -15,7 +15,7 @@ function fileSize(bytes) {
   return `${bytes} B`;
 }
 
-export default function AttachmentList({ query, disabled, exclude = [] }) {
+export default function AttachmentList({ query, disabled, exclude = [], emptyMessage = "Nenhum anexo salvo." }) {
   const [selected, setSelected] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const [downloading, setDownloading] = useState(null);
@@ -53,7 +53,7 @@ export default function AttachmentList({ query, disabled, exclude = [] }) {
     </p>
   );
   if (query.isPending) return <p className="text-sm text-muted-foreground">Carregando anexos...</p>;
-  if (!files.length) return <p className="text-sm text-muted-foreground">Nenhum anexo salvo.</p>;
+  if (!files.length) return <p className="text-sm text-muted-foreground">{emptyMessage}</p>;
 
   return (
     <>

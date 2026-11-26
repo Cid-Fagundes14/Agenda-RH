@@ -37,6 +37,15 @@ export const listTrainingDepartments = () => list("training_departments");
 export const listTrainingTitles = () => list("training_titles");
 export const saveTrainingRequest = (id, fields) => write("training_requests", id, fields);
 
+export function saveTrainingConvocations(id, previous, convocations) {
+  return resultOf(getSupabase().from("training_requests")
+    .update({ convocations })
+    .eq("id", id)
+    .eq("convocations", JSON.stringify(previous))
+    .select()
+    .maybeSingle());
+}
+
 export async function deleteTask(id) {
   await removeParentAttachments("task", id);
   await resultOf(getSupabase().from("tasks").delete().eq("id", id).select("id").single());
