@@ -93,8 +93,10 @@ export default function TrainingRequestForm({ request, titles, departments, onDi
         employee_name: employee,
         training_title: title,
         registration: optional("registration"),
+        employee_role: optional("employee_role"),
         department: optional("department"),
         requester: optional("requester"),
+        immediate_manager: optional("immediate_manager"),
         training_type: optional("training_type"),
         modality: optional("modality"),
         location: optional("location"),
@@ -142,13 +144,15 @@ export default function TrainingRequestForm({ request, titles, departments, onDi
           <legend className="mb-2 text-sm font-semibold">Pedido</legend>
           {input("employee_name", "Nome do colaborador *", { required: true, maxLength: 160 })}
           {input("registration", "Matrícula", { maxLength: 80 })}
+          {input("employee_role", "Função", { maxLength: 160 })}
           <div className="min-w-0">
             {input("department", "Departamento / Área", { maxLength: 160, list: "training-department-options" })}
             <datalist id="training-department-options">
               {departments.map(({ id, title }) => <option key={id} value={title} />)}
             </datalist>
           </div>
-          {input("requester", "Gestor solicitante", { maxLength: 160 })}
+          {input("requester", "Solicitante", { maxLength: 160 })}
+          {input("immediate_manager", "Gestor imediato", { maxLength: 160 })}
           <div className="min-w-0 sm:col-span-2">
             {input("training_title", "Treinamento solicitado *", { required: true, maxLength: 200, list: "training-title-options" })}
             <datalist id="training-title-options">
