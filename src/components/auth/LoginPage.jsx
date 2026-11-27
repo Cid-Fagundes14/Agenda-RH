@@ -1,4 +1,3 @@
-import { LogIn } from "lucide-react";
 import { useState } from "react";
 import { getSupabase, hasSupabaseConfig, resultOf } from "@/api/supabase";
 import { AuthLayout } from "@/components/auth/AuthLayout";
@@ -26,7 +25,11 @@ export function LoginPage() {
   }
 
   return (
-    <AuthLayout icon={LogIn} title="Entrar na Agenda de RH" subtitle="Acesse suas tarefas, projetos e calendário.">
+    <AuthLayout
+      iconSrc="/icons/agenda-rh-mark-192.png"
+      title="Entrar na Agenda de RH"
+      subtitle="Acesse suas tarefas, projetos e calendário."
+    >
       <form onSubmit={submit} className="space-y-4">
         <AuthError>{error || (!hasSupabaseConfig && "O Supabase ainda não foi configurado neste ambiente.")}</AuthError>
         <AuthField label="E-mail" name="email" type="email" autoComplete="username" required />
