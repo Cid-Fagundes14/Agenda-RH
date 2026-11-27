@@ -12,7 +12,7 @@ export default function Layout() {
       <AppSidebar user={user} onLogout={() => logout()} />
       <header className="flex min-h-14 items-center justify-between border-b border-sidebar-border bg-sidebar px-4 text-sidebar-foreground lg:hidden">
         <Link to="/" className="inline-flex items-center gap-2 font-display font-bold">
-          <img src="/agenda-rh-icon.png" alt="" width={28} height={28} className="rounded-md" />
+          <img src="/icons/agenda-rh-mark-96.png" alt="" width={28} height={28} className="size-7 shrink-0 object-contain" />
           Agenda de RH
         </Link>
         <Link
