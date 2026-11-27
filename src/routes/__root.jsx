@@ -15,9 +15,9 @@ export const Route = createRootRoute({
       { name: "description", content: "Tarefas, treinamentos obrigatórios e desenvolvimento de lideranças em um só lugar." },
     ],
     links: [
-      { rel: "icon", href: "/favicon.ico?v=2", sizes: "16x16 32x32 48x48", type: "image/x-icon" },
-      { rel: "apple-touch-icon", href: "/icons/agenda-rh-apple-180.png", sizes: "180x180" },
-      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "icon", href: "/favicon.ico?v=3", sizes: "16x16 32x32 48x48", type: "image/x-icon" },
+      { rel: "apple-touch-icon", href: "/icons/agenda-rh-mark-apple-180.png", sizes: "180x180" },
+      { rel: "manifest", href: "/manifest.webmanifest?v=3" },
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },

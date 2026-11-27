@@ -25,11 +25,11 @@ export default function AppSidebar({ user, onLogout }) {
       <div className="flex h-16 items-center justify-between gap-1 border-b border-sidebar-border px-3">
         <Link to="/" className="inline-flex items-center gap-2 whitespace-nowrap font-display text-base font-extrabold tracking-tight text-sidebar-foreground">
           <img
-            src="/agenda-rh-icon.png"
+            src="/icons/agenda-rh-mark-96.png"
             alt=""
             width={32}
             height={32}
-            className="size-8 shrink-0 rounded-lg ring-1 ring-white/25"
+            className="size-8 shrink-0 object-contain"
           />
           <span>Agenda de RH</span>
         </Link>
