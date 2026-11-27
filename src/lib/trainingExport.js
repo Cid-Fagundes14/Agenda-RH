@@ -80,7 +80,8 @@ function reportSheet(sheet, title, description, headers, widths, rows) {
 export async function exportTrainingExcel(requests, filters = []) {
   const records = reportRows(requests);
   const summary = records.map(({ request, attempts, latest, trainingDate, status, urgency, certificate }) => [
-    request.employee_name, request.registration, request.department, request.training_title,
+    request.employee_name, request.registration, request.employee_role, request.department,
+    request.requester, request.immediate_manager, request.training_title,
     status, urgency, excelDateCell(request.expected_completion_date),
     latest ? attemptLabel(attempts.length) : NOT_INVITED,
     excelDateCell(latest?.invited_on), excelDateCell(trainingDate), attendanceCell(latest?.attendance),
@@ -94,10 +95,10 @@ export async function exportTrainingExcel(requests, filters = []) {
 
   await saveFilteredReportSheets(reportName("xlsx"), [
     reportSheet("Solicitações", REPORT_TITLE, reportDescription(requests, filters), [
-      "Colaborador", "Matrícula", "Departamento / Área", "Treinamento", "Status da solicitação",
-      "Urgência", "Prazo previsto", "Última convocação", "Data da convocação", "Data do treinamento",
-      "Comparecimento", "Certificado",
-    ], [22, 12, 21, 31, 22, 11, 16, 20, 20, 21, 19, 16], summary),
+      "Colaborador", "Matrícula", "Função", "Departamento / Área", "Solicitante", "Gestor imediato",
+      "Treinamento", "Status da solicitação", "Urgência", "Prazo previsto", "Última convocação",
+      "Data da convocação", "Data do treinamento", "Comparecimento", "Certificado",
+    ], [22, 12, 24, 21, 25, 25, 31, 22, 11, 16, 20, 20, 21, 19, 16], summary),
     reportSheet(HISTORY_TITLE, HISTORY_TITLE,
       `${history.length} ${history.length === 1 ? "tentativa registrada" : "tentativas registradas"}`, [
         "Colaborador", "Matrícula", "Treinamento", "Convocação", "Data da convocação",
@@ -152,18 +153,27 @@ export async function exportTrainingPdf(requests, filters = []) {
   doc.setFontSize(10);
   const details = doc.splitTextToSize(reportDescription(requests, filters), width - margin * 2);
   doc.text(details, margin, 82);
-  const columnWidths = [91, 50, 77, 124, 79, 49, 61, 159, 64];
+  const columnWidths = [108, 110, 67, 86, 73, 49, 58, 147, 56];
   autoTable(doc, {
     startY: 103 + (details.length - 1) * 12,
     margin: { left: margin, right: margin, top: 38, bottom: 68 },
     head: [[
-      "Colaborador", "Matrícula", "Departamento / Área", "Treinamento", "Status da solicitação",
+      "Colaborador", "Solicitante e gestor", "Departamento / Área", "Treinamento", "Status da solicitação",
       "Urgência", "Prazo previsto", "Convocação e comparecimento", "Certificado",
     ]],
     body: records.map((record) => {
       const { request, status, urgency, certificate } = record;
+      const employee = [
+        request.employee_name,
+        request.registration && `Matrícula: ${request.registration}`,
+        request.employee_role && `Função: ${request.employee_role}`,
+      ].filter(Boolean).join("\n");
+      const contacts = [
+        request.requester && `Solicitante: ${request.requester}`,
+        request.immediate_manager && `Gestor imediato: ${request.immediate_manager}`,
+      ].filter(Boolean).join("\n");
       return [
-        request.employee_name, request.registration, request.department, request.training_title,
+        employee, contacts, request.department, request.training_title,
         status, urgency, formatBR(request.expected_completion_date), pdfConvocation(record), certificate,
       ].map((value) => value || "-");
     }),
